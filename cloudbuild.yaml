@@ -1,0 +1,83 @@
+options:
+  logStreamingOption: STREAM_ON
+  logging: LEGACY
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+availableSecrets:
+  secretManager:
+    - versionName: >-
+        projects/$PROJECT_ID/secrets/anecdote-surveys-backend-webapp-url/versions/latest
+      env: WEBAPP_URL
+    - versionName: >-
+        projects/$PROJECT_ID/secrets/anecdote-surveys-backend-database-url/versions/latest
+      env: DATABASE_URL
+    - versionName: >-
+        projects/$PROJECT_ID/secrets/anecdote-surveys-backend-nextauth-secret/versions/latest
+      env: NEXTAUTH_SECRET
+    - versionName: >-
+        projects/$PROJECT_ID/secrets/anecdote-surveys-backend-nextauth-url/versions/latest
+      env: NEXTAUTH_URL
+    - versionName: >-
+        projects/$PROJECT_ID/secrets/anecdote-surveys-backend-encryption-key/versions/latest
+      env: ENCRYPTION_KEY
+    - versionName: >-
+        projects/$PROJECT_ID/secrets/anecdote-surveys-backend-postgres-password/versions/latest
+      env: POSTGRES_PASSWORD
+    - versionName: >-
+        projects/$PROJECT_ID/secrets/anecdote-surveys-backend-email-verification-disabled/versions/latest
+      env: EMAIL_VERIFICATION_DISABLED
+    - versionName: >-
+        projects/$PROJECT_ID/secrets/anecdote-surveys-backend-password-reset-disabled/versions/latest
+      env: PASSWORD_RESET_DISABLED
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - '-c'
+      - docker compose build formbricks
+    id: docker build anecdote-surveys-backend
+    entrypoint: bash
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - tag
+      - 'workspace-formbricks:latest'
+      - 'us-east4-docker.pkg.dev/$PROJECT_ID/anecdote-surveys-backend/anecdote-surveys-backend:latest'
+    id: docker tag anecdote-surveys-backend
+    entrypoint: docker
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - 'us-east4-docker.pkg.dev/$PROJECT_ID/anecdote-surveys-backend/anecdote-surveys-backend:latest'
+    id: docker push anecdote-surveys-backend
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    args:
+      - '-c'
+      - |
+        sed -i "s|DATABASE_URL:.*|DATABASE_URL: '$$DATABASE_URL'|" app.yaml
+        sed -i "s|EMAIL_VERIFICATION_DISABLED:.*|EMAIL_VERIFICATION_DISABLED: $$EMAIL_VERIFICATION_DISABLED|" app.yaml
+        sed -i "s|ENCRYPTION_KEY:.*|ENCRYPTION_KEY: '$$ENCRYPTION_KEY'|" app.yaml
+        sed -i "s|NEXTAUTH_SECRET:.*|NEXTAUTH_SECRET: '$$NEXTAUTH_SECRET'|" app.yaml
+        sed -i "s|NEXTAUTH_URL:.*|NEXTAUTH_URL: '$$NEXTAUTH_URL'|" app.yaml
+        sed -i "s|PASSWORD_RESET_DISABLED:.*|PASSWORD_RESET_DISABLED: $$PASSWORD_RESET_DISABLED|" app.yaml
+        sed -i "s|POSTGRES_PASSWORD:.*|POSTGRES_PASSWORD: '$$POSTGRES_PASSWORD'|" app.yaml
+        sed -i "s|WEBAPP_URL:.*|WEBAPP_URL: '$$WEBAPP_URL'|" app.yaml
+    id: app.yaml secrets injection
+    entrypoint: bash
+    secretEnv:
+      - WEBAPP_URL
+      - DATABASE_URL
+      - NEXTAUTH_SECRET
+      - NEXTAUTH_URL
+      - ENCRYPTION_KEY
+      - POSTGRES_PASSWORD
+      - EMAIL_VERIFICATION_DISABLED
+      - PASSWORD_RESET_DISABLED
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    args:
+      - '-c'
+      - |
+        gcloud app deploy app.yaml --project=$PROJECT_ID --image-url=us-east4-docker.pkg.dev/$PROJECT_ID/anecdote-surveys-backend/anecdote-surveys-backend:latest --quiet
+    id: gcloud app deploy
+    entrypoint: bash
+timeout: 2400s
+images:
+  - 'us-east4-docker.pkg.dev/$PROJECT_ID/anecdote-surveys-backend/anecdote-surveys-backend:latest'
