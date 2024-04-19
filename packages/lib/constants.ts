@@ -150,20 +150,20 @@ export const SURVEY_BG_COLORS = [
 
 // Rate Limiting
 export const SIGNUP_RATE_LIMIT = {
-  interval: 60 * 60 * 1000, // 60 minutes
-  allowedPerInterval: 30,
+  interval: 1000, // 1 second
+  allowedPerInterval: 1000,
 };
 export const LOGIN_RATE_LIMIT = {
-  interval: 15 * 60 * 1000, // 15 minutes
-  allowedPerInterval: 30,
+  interval: 1000, // 1 second
+  allowedPerInterval: 1000,
 };
 export const CLIENT_SIDE_API_RATE_LIMIT = {
-  interval: 5 * 60 * 1000, // 5 minutes
-  allowedPerInterval: 200,
+  interval: 1000, // 1 second
+  allowedPerInterval: 1000,
 };
 export const SHARE_RATE_LIMIT = {
-  interval: 60 * 60 * 1000, // 60 minutes
-  allowedPerInterval: 30,
+  interval: 1000, // 1 second
+  allowedPerInterval: 1000,
 };
 
 export const SYNC_USER_IDENTIFICATION_RATE_LIMIT = {
