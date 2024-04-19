@@ -202,7 +202,7 @@ export default function LinkSurvey({
           survey={survey}
           styling={determineStyling()}
           languageCode={languageCode}
-          isBrandingEnabled={product.linkSurveyBranding}
+          isBrandingEnabled={false}
           getSetIsError={(f: (value: boolean) => void) => {
             setIsError = f;
           }}
