@@ -150,25 +150,25 @@ export const SURVEY_BG_COLORS = [
 
 // Rate Limiting
 export const SIGNUP_RATE_LIMIT = {
-  interval: 1000, // 1 second
-  allowedPerInterval: 1000,
+  interval: Number(env.SIGNUP_RATE_LIMIT_INTERVAL) || 1000, // 1 second
+  allowedPerInterval: Number(env.SIGNUP_RATE_LIMIT_ALLOWED) || 1000,
 };
 export const LOGIN_RATE_LIMIT = {
-  interval: 1000, // 1 second
-  allowedPerInterval: 1000,
+  interval: Number(env.LOGIN_RATE_LIMIT_INTERVAL) || 1000, // 1 second
+  allowedPerInterval: Number(env.LOGIN_RATE_LIMIT_ALLOWED) || 1000,
 };
 export const CLIENT_SIDE_API_RATE_LIMIT = {
-  interval: 1000, // 1 second
-  allowedPerInterval: 1000,
+  interval: Number(env.CLIENT_RATE_LIMIT_INTERVAL) || 1000, // 1 second
+  allowedPerInterval: Number(env.CLIENT_RATE_LIMIT_ALLOWED) || 1000,
 };
 export const SHARE_RATE_LIMIT = {
-  interval: 1000, // 1 second
-  allowedPerInterval: 1000,
+  interval: Number(env.SHARE_RATE_LIMIT_INTERVAL) || 1000, // 1 second
+  allowedPerInterval: Number(env.SHARE_RATE_LIMIT_ALLOWED) || 1000,
 };
 
 export const SYNC_USER_IDENTIFICATION_RATE_LIMIT = {
-  interval: 60 * 1000, // 1 minute
-  allowedPerInterval: 5,
+  interval: Number(env.SYNC_USER_IDENTIFICATION_RATE_LIMIT_INTERVAL) || 1000, // 1 second
+  allowedPerInterval: Number(env.SYNC_USER_IDENTIFICATION_RATE_LIMIT_ALLOWED) || 1000,
 };
 
 export const DEBUG = env.DEBUG === "1";
