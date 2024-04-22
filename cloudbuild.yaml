@@ -28,6 +28,9 @@ availableSecrets:
     - versionName: >-
         projects/$PROJECT_ID/secrets/anecdote-surveys-backend-password-reset-disabled/versions/latest
       env: PASSWORD_RESET_DISABLED
+    - versionName: >-
+        projects/$PROJECT_ID/secrets/anecdote-surveys-backend-next-public-sentry-dsn/versions/latest
+      env: NEXT_PUBLIC_SENTRY_DSN
 
 steps:
   - name: gcr.io/cloud-builders/docker
@@ -60,6 +63,7 @@ steps:
         sed -i "s|PASSWORD_RESET_DISABLED:.*|PASSWORD_RESET_DISABLED: $$PASSWORD_RESET_DISABLED|" app.yaml
         sed -i "s|POSTGRES_PASSWORD:.*|POSTGRES_PASSWORD: '$$POSTGRES_PASSWORD'|" app.yaml
         sed -i "s|WEBAPP_URL:.*|WEBAPP_URL: '$$WEBAPP_URL'|" app.yaml
+        sed -i "s|NEXT_PUBLIC_SENTRY_DSN:.*|NEXT_PUBLIC_SENTRY_DSN: '$$NEXT_PUBLIC_SENTRY_DSN'|" app.yaml
     id: app.yaml secrets injection
     entrypoint: bash
     secretEnv:
@@ -71,6 +75,7 @@ steps:
       - POSTGRES_PASSWORD
       - EMAIL_VERIFICATION_DISABLED
       - PASSWORD_RESET_DISABLED
+      - NEXT_PUBLIC_SENTRY_DSN
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     args:
       - '-c'
