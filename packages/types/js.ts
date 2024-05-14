@@ -102,6 +102,9 @@ export const ZJsConfigInput = z.object({
   errorHandler: z.function().args(z.any()).returns(z.void()).optional(),
   userId: z.string().optional(),
   attributes: ZPersonAttributes.optional(),
+  collectConsoleErrors: z.boolean().optional(),
+  collectLocalStorage: z.boolean().optional(),
+  collectSessionStorage: z.boolean().optional(),
 });
 
 export type TJsConfigInput = z.infer<typeof ZJsConfigInput>;

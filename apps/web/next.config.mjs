@@ -23,7 +23,7 @@ const nextConfig = {
     serverComponentsExternalPackages: ["@aws-sdk"],
     instrumentationHook: true,
     outputFileTracingIncludes: {
-      "app/api/packages": ["../../packages/js-core/dist/*", "../../packages/surveys/dist/*"],
+      "app/api/packages": ["../../packages/sdk-core/dist/*", "../../packages/surveys/dist/*"],
     },
   },
   cacheHandler: process.env.VERCEL !== "1" ? require.resolve("./cache-handler.mjs") : undefined,

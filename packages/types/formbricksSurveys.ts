@@ -32,5 +32,5 @@ export interface SurveyInlineProps extends SurveyBaseProps {
 export interface SurveyModalProps extends SurveyBaseProps {
   clickOutside: boolean;
   darkOverlay: boolean;
-  placement: "bottomLeft" | "bottomRight" | "topLeft" | "topRight" | "center";
+  placement: "bottomLeft" | "bottomRight" | "topLeft" | "topRight" | "center" | "centerRight";
 }

@@ -57,6 +57,8 @@ export default function Modal({
         return "sm:bottom-3 sm:right-3";
       case "topRight":
         return "sm:top-3 sm:right-3 sm:bottom-3";
+      case "centerRight":
+        return "sm:top-1/2 sm:right-0 sm:transform sm:-translate-y-1/2";
       case "topLeft":
         return "sm:top-3 sm:left-3 sm:bottom-3";
       case "bottomLeft":

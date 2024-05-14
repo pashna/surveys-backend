@@ -20,7 +20,7 @@ export async function POST(request: Request): Promise<Response> {
   if (responseInput.personId === "legacy") {
     responseInput.personId = null;
   }
-  const agent = UAParser(request.headers.get("user-agent"));
+  const agent = UAParser(request.headers.get("user-agent") || "");
   const country =
     headers().get("CF-IPCountry") ||
     headers().get("X-Vercel-IP-Country") ||

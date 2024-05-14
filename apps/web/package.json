@@ -12,6 +12,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@anecdoteai/sdk-core": "workspace:*",
     "@formbricks/api": "workspace:*",
     "@formbricks/database": "workspace:*",
     "@formbricks/ee": "workspace:*",

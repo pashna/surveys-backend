@@ -118,6 +118,7 @@ export const updateProduct = async (
       where: {
         id: productId,
       },
+      // @ts-ignore
       data: {
         ...data,
         environments: {
@@ -256,6 +257,7 @@ export const createProduct = async (
   const { environments, ...data } = productInput;
 
   let product = await prisma.product.create({
+    // @ts-ignore
     data: {
       ...data,
       name: productInput.name,

@@ -8,12 +8,12 @@
     "@formbricks/web#go": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["@formbricks/database#db:setup", "@formbricks/js#build"]
+      "dependsOn": ["@formbricks/database#db:setup", "@formbricks/js#build", "@anecdoteai/sdk#build"]
     },
     "@formbricks/demo#go": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["@formbricks/js#build"]
+      "dependsOn": ["@formbricks/js#build", "@anecdoteai/sdk#build"]
     },
     "@formbricks/api#build": {
       "outputs": ["dist/**"],
@@ -24,6 +24,14 @@
       "dependsOn": ["^build"]
     },
     "@formbricks/js#build:dev": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build:dev"]
+    },
+    "@anecdoteai/sdk#build": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["^build"]
+    },
+    "@anecdoteai/sdk#build:dev": {
       "outputs": ["dist/**"],
       "dependsOn": ["^build:dev"]
     },
