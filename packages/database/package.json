@@ -33,7 +33,9 @@
   "dependencies": {
     "@prisma/client": "^5.12.1",
     "@prisma/extension-accelerate": "^1.0.0",
-    "dotenv-cli": "^7.4.1"
+    "@types/ua-parser-js": "^0.7.39",
+    "dotenv-cli": "^7.4.1",
+    "ua-parser-js": "^1.0.37"
   },
   "devDependencies": {
     "@formbricks/tsconfig": "workspace:*",

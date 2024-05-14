@@ -10,6 +10,9 @@ export async function GET(_: NextRequest, { params }: { params: { slug: string }
     case "js-core":
       path = `../../packages/js-core/dist/index.umd.cjs`;
       break;
+    case "sdk-core":
+      path = `../../packages/sdk-core/dist/index.umd.cjs`;
+      break;
     case "surveys":
       path = `../../packages/surveys/dist/index.umd.cjs`;
       break;

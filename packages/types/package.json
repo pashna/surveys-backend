@@ -11,6 +11,8 @@
     "@formbricks/tsconfig": "workspace:*"
   },
   "dependencies": {
+    "@types/ua-parser-js": "^0.7.39",
+    "ua-parser-js": "^1.0.37",
     "zod": "^3.22.4"
   }
 }

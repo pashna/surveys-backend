@@ -233,6 +233,8 @@ export const ZResponseInput = z.object({
   ttc: ZResponseTtc.optional(),
   meta: z
     .object({
+      anecdoteai: z.any().optional(),
+      customMetaField: z.string().optional(),
       source: z.string().optional(),
       url: z.string().optional(),
       userAgent: z
@@ -281,6 +283,7 @@ export const ZResponseUpdate = z.object({
       url: z.string().optional(),
       source: z.string().optional(),
       action: z.string().optional(),
+      anecdoteai: z.any().optional(),
     })
     .optional(),
 });
