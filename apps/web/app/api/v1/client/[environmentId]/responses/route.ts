@@ -43,7 +43,7 @@ export async function POST(request: Request, context: Context): Promise<Response
     delete responseInput.personId;
   }
 
-  const agent = UAParser(request.headers.get("user-agent"));
+  const agent = UAParser(request.headers.get("user-agent") || "");
   const country =
     headers().get("CF-IPCountry") ||
     headers().get("X-Vercel-IP-Country") ||
@@ -77,7 +77,7 @@ export async function POST(request: Request, context: Context): Promise<Response
 
   let response: TResponse;
   try {
-    const meta: TResponseInput["meta"] = {
+    const meta: TResponseInput["meta"] & { anecdoteai: any } = {
       source: responseInput?.meta?.source,
       url: responseInput?.meta?.url,
       userAgent: {
@@ -87,6 +87,12 @@ export async function POST(request: Request, context: Context): Promise<Response
       },
       country: country,
       action: responseInput?.meta?.action,
+      anecdoteai: {
+        ...responseInput?.meta?.anecdoteai,
+        browser: agent?.browser.name,
+        device: agent?.device.type,
+        os: agent?.os.name,
+      },
     };
 
     response = await createResponse({

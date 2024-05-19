@@ -58,3 +58,5 @@ packages/lib/uploads
 # Vite Timestamps
 vite.config.*.timestamp-*
 
+idea*
+.idea/**
