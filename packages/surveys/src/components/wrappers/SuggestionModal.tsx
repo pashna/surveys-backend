@@ -29,7 +29,7 @@ export default function SuggestionModal({ children, isOpen, onClick, onClose, hi
           onClick={onClick}
           style={{ border: "1px solid rgba(7, 10, 38, 0.70)", borderRadius: "12px 12px 0 0" }}
           className={cn(
-            "absolute right-0 top-3/4 -translate-y-1/2 translate-x-1/2 -rotate-90 transform sm:top-1/2",
+            "absolute bottom-32 right-0 top-auto -translate-y-1/2 translate-x-1/2 -rotate-90 transform sm:bottom-auto sm:top-1/2",
             "w-186 m-0 bg-white shadow-md transition-all duration-500 ease-in-out",
             "opacity-100",
             "group pointer-events-auto",
