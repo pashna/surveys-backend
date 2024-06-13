@@ -8,14 +8,7 @@ export const ZOptionalNumber = z.number().optional();
 
 export const ZColor = z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
 
-export const ZPlacement = z.enum([
-  "bottomLeft",
-  "bottomRight",
-  "topLeft",
-  "topRight",
-  "center",
-  "centerRight",
-]);
+export const ZPlacement = z.enum(["bottomLeft", "bottomRight", "topLeft", "topRight", "center", "widget"]);
 
 export type TPlacement = z.infer<typeof ZPlacement>;
 

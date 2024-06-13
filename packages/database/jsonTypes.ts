@@ -30,7 +30,7 @@ declare global {
     export type SurveyQuestions = TSurveyQuestions;
     export type SurveyThankYouCard = TSurveyThankYouCard;
     export type SurveyHiddenFields = TSurveyHiddenFields;
-    export type SurveyProductOverwrites = TSurveyProductOverwrites;
+    export type SurveyProductOverwrites = TSurveyProductOverwrites | null;
     export type SurveyStyling = TSurveyStyling;
     export type SurveyClosedMessage = TSurveyClosedMessage;
     export type SurveySingleUse = TSurveySingleUse;

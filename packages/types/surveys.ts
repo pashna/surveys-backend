@@ -541,6 +541,7 @@ export const ZSurveyInput = z
     displayPercentage: z.number().min(1).max(100).nullish(),
     triggers: z.array(z.string()).optional(),
     inlineTriggers: ZSurveyInlineTriggers.optional(),
+    productOverwrites: ZSurveyProductOverwrites.nullish(),
   })
   .refine(
     (survey) => {

@@ -8,7 +8,7 @@ RUN apk add --no-cache libc6-compat
 RUN apk update
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo
+RUN yarn global add turbo@1.12.5
 COPY . .
 RUN turbo prune @formbricks/web --docker
 

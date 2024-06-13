@@ -105,7 +105,7 @@ export function SurveyModal({
       </SuggestionModal>
 
       <Modal
-        placement={"centerRight"}
+        placement={"widget"}
         clickOutside={clickOutside}
         darkOverlay={darkOverlay}
         highlightBorderColor={highlightBorderColor}
