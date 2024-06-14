@@ -13,7 +13,8 @@ import {
 } from "./errors";
 import { deinitalize, initialize } from "./initialize";
 import { Logger } from "./logger";
-import { closeSurvey } from "./widget";
+
+// import { closeSurvey } from "./widget";
 
 const config = Config.getInstance();
 const logger = Logger.getInstance();
@@ -184,7 +185,7 @@ export const logoutPerson = async (): Promise<void> => {
 
 export const resetPerson = async (): Promise<Result<void, NetworkError>> => {
   logger.debug("Resetting state & getting new state from backend");
-  closeSurvey();
+  // closeSurvey();
   const syncParams = {
     environmentId: config.get().environmentId,
     apiHost: config.get().apiHost,

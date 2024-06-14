@@ -21,7 +21,8 @@ import { checkPageUrl } from "./noCodeActions";
 import { updatePersonAttributes } from "./person";
 import { sync } from "./sync";
 import { getIsDebug } from "./utils";
-import { addWidgetContainer, removeWidgetContainer, setIsSurveyRunning } from "./widget";
+
+// import { addWidgetContainer, removeWidgetContainer, setIsSurveyRunning } from "./widget";
 
 const config = Config.getInstance();
 const logger = Logger.getInstance();
@@ -92,7 +93,6 @@ export const initialize = async (
   }
 
   logger.debug("Adding widget container to DOM");
-  addWidgetContainer();
 
   let updatedAttributes: TPersonAttributes | null = null;
   if (c.attributes) {
@@ -206,8 +206,8 @@ export const checkInitialized = (): Result<void, NotInitializedError> => {
 
 export const deinitalize = (): void => {
   logger.debug("Deinitializing");
-  removeWidgetContainer();
-  setIsSurveyRunning(false);
+  // removeWidgetContainer();
+  // setIsSurveyRunning(false);
   removeAllEventListeners();
   setIsInitialized(false);
 };

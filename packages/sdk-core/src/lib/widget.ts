@@ -10,20 +10,29 @@ import { ErrorHandler } from "./errors";
 import { ErrorsLogger } from "./errorsLogger.ts";
 import { putFormbricksInErrorState } from "./initialize";
 import { Logger } from "./logger";
+import { SurveyList } from "./surveyList.ts";
 import { filterPublicSurveys, sync } from "./sync";
 import { getDefaultLanguageCode, getLanguageCode } from "./utils";
 
-const containerId = "formbricks-web-container";
+// const getContainerId = (surveyId: string) => {
+//   const containerId = "formbricks-web-container";
+//
+//   return containerId + "-" + surveyId;
+// }
 
 const config = Config.getInstance();
 const logger = Logger.getInstance();
 const errorHandler = ErrorHandler.getInstance();
-let isSurveyRunning = false;
+const surveysRunningList = SurveyList.getInstance();
 let setIsError = (_: boolean) => {};
 let setIsResponseSendingFinished = (_: boolean) => {};
 
-export const setIsSurveyRunning = (value: boolean) => {
-  isSurveyRunning = value;
+const getIsSurveyRunning = (surveyId: string) => {
+  return surveysRunningList.getIsSurveyRunning(surveyId);
+};
+
+const setIsSurveyRunning = (surveyId: string, value: boolean) => {
+  surveysRunningList.setIsSurveyRunning(surveyId, value);
 };
 
 const shouldDisplayBasedOnPercentage = (displayPercentage: number) => {
@@ -45,11 +54,11 @@ export const triggerSurvey = async (survey: TSurvey, action?: string): Promise<v
 };
 
 const renderWidget = async (survey: TSurvey, action?: string) => {
-  if (isSurveyRunning) {
+  if (getIsSurveyRunning(survey.id)) {
     logger.debug("A survey is already running. Skipping.");
     return;
   }
-  setIsSurveyRunning(true);
+  setIsSurveyRunning(survey.id, true);
 
   if (survey.delay) {
     logger.debug(`Delaying survey by ${survey.delay} seconds.`);
@@ -66,7 +75,7 @@ const renderWidget = async (survey: TSurvey, action?: string) => {
     //if survey is not available in selected language, survey wont be shown
     if (!displayLanguage) {
       logger.debug("Survey not available in specified language.");
-      setIsSurveyRunning(true);
+      setIsSurveyRunning(survey.id, true);
       return;
     }
     languageCode = displayLanguage;
@@ -235,8 +244,8 @@ const renderWidget = async (survey: TSurvey, action?: string) => {
 
 export const closeSurvey = async (): Promise<void> => {
   // remove container element from DOM
-  removeWidgetContainer();
-  addWidgetContainer();
+  // removeWidgetContainer();
+  // addWidgetContainer();
 
   // if unidentified user, refilter the surveys
   if (!config.get().userId) {
@@ -246,7 +255,6 @@ export const closeSurvey = async (): Promise<void> => {
       ...config.get(),
       state: updatedState,
     });
-    setIsSurveyRunning(false);
     return;
   }
 
@@ -260,22 +268,21 @@ export const closeSurvey = async (): Promise<void> => {
       },
       true
     );
-    setIsSurveyRunning(false);
   } catch (e: any) {
     errorHandler.handle(e);
     putFormbricksInErrorState();
   }
 };
 
-export const addWidgetContainer = (): void => {
-  const containerElement = document.createElement("div");
-  containerElement.id = containerId;
-  document.body.appendChild(containerElement);
-};
+// export const addWidgetContainer = (surveyId: string): void => {
+//   const containerElement = document.createElement("div");
+//   containerElement.id = getContainerId(surveyId)
+//   document.body.appendChild(containerElement);
+// };
 
-export const removeWidgetContainer = (): void => {
-  document.getElementById(containerId)?.remove();
-};
+// export const removeWidgetContainer = (surveyId: string): void => {
+//   document.getElementById(getContainerId(surveyId))?.remove();
+// };
 
 const loadFormbricksSurveysExternally = (): Promise<typeof window.formbricksSurveys> => {
   return new Promise((resolve, reject) => {

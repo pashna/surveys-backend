@@ -12,7 +12,7 @@ const placements = [
   { name: "Top Right", value: "topRight", disabled: false },
   { name: "Top Left", value: "topLeft", disabled: false },
   { name: "Bottom Left", value: "bottomLeft", disabled: false },
-  { name: "Centered Modal", value: "center", disabled: false },
+  { name: "Widget", value: "widget", disabled: false },
 ];
 
 type TPlacementProps = {

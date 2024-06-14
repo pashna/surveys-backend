@@ -31,7 +31,7 @@ export const renderSurveyModal = (props: SurveyModalProps) => {
 
   // add container element to DOM
   const element = document.createElement("div");
-  element.id = "formbricks-modal-container";
+  element.id = "formbricks-modal-container" + props.survey.id;
   document.body.appendChild(element);
   render(h(SurveyModal, props), element);
 };

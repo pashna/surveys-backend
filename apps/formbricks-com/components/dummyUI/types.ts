@@ -397,7 +397,7 @@ export type TSurveyDisplayOption = z.infer<typeof ZSurveyDisplayOption>;
 
 export const ZColor = z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/);
 
-export const ZPlacement = z.enum(["bottomLeft", "bottomRight", "topLeft", "topRight", "center"]);
+export const ZPlacement = z.enum(["bottomLeft", "bottomRight", "topLeft", "topRight", "center", "overlay"]);
 
 export type TPlacement = z.infer<typeof ZPlacement>;
 

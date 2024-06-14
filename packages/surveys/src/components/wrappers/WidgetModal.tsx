@@ -11,17 +11,19 @@ interface ModalProps {
   clickOutside: boolean;
   darkOverlay: boolean;
   highlightBorderColor: string | null;
-  onClose: () => void;
+  onCloseSurvey?: () => void;
+  onCloseSuggestionAndSurvey: () => void;
 }
 
-export default function Modal({
+export default function WidgetModal({
   children,
   isOpen,
   placement,
   clickOutside,
   darkOverlay,
   highlightBorderColor,
-  onClose,
+  onCloseSurvey,
+  onCloseSuggestionAndSurvey,
 }: ModalProps) {
   const [show, setShow] = useState(false);
   const isCenter = placement === "center";
@@ -41,14 +43,14 @@ export default function Modal({
         modalRef.current &&
         !(modalRef.current as HTMLElement).contains(e.target as Node)
       ) {
-        onClose();
+        onCloseSuggestionAndSurvey();
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [show, clickOutside, onClose, isCenter]);
+  }, [show, clickOutside, onCloseSuggestionAndSurvey, isCenter]);
 
   // This classes will be applied only when screen size is greater than sm, hence sm is common prefix for all
   const getPlacementStyle = (placement: TPlacement) => {
@@ -57,6 +59,8 @@ export default function Modal({
         return "sm:bottom-3 sm:right-3";
       case "topRight":
         return "sm:top-3 sm:right-3 sm:bottom-3";
+      case "widget":
+        return "sm:top-1/2 sm:right-0 sm:transform sm:-translate-y-1/2";
       case "topLeft":
         return "sm:top-3 sm:left-3 sm:bottom-3";
       case "bottomLeft":
@@ -110,7 +114,7 @@ export default function Modal({
             <div class="absolute right-0 top-0 block pr-2 pt-2">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={onCloseSurvey}
                 class="text-close-button hover:text-close-button-focus focus:ring-close-button-focus relative h-5 w-5 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2">
                 <span class="sr-only">Close survey</span>
                 <svg
