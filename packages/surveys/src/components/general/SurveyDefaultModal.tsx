@@ -7,7 +7,6 @@ import { Survey } from "./Survey";
 
 export function SurveyDefaultModal({
   survey,
-  isBrandingEnabled,
   activeQuestionId,
   getSetIsError,
   placement,
@@ -50,7 +49,7 @@ export function SurveyDefaultModal({
         onClose={close}>
         <Survey
           survey={survey}
-          isBrandingEnabled={isBrandingEnabled}
+          isBrandingEnabled={false}
           activeQuestionId={activeQuestionId}
           onDisplay={onDisplay}
           getSetIsResponseSendingFinished={getSetIsResponseSendingFinished}
