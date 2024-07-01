@@ -2,7 +2,6 @@ import SettingsCard from "@/app/(app)/environments/[environmentId]/settings/comp
 import SettingsTitle from "@/app/(app)/environments/[environmentId]/settings/components/SettingsTitle";
 import { notFound } from "next/navigation";
 
-import { getMultiLanguagePermission } from "@formbricks/ee/lib/service";
 import EditLanguage from "@formbricks/ee/multiLanguage/components/EditLanguage";
 import { getProductByEnvironmentId } from "@formbricks/lib/product/service";
 import { getTeam } from "@formbricks/lib/team/service";
@@ -20,7 +19,7 @@ export default async function LanguageSettingsPage({ params }: { params: { envir
     throw new Error("Team not found");
   }
 
-  const isMultiLanguageAllowed = getMultiLanguagePermission(team);
+  const isMultiLanguageAllowed = true;
 
   if (!isMultiLanguageAllowed) {
     notFound();

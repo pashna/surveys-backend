@@ -4,25 +4,28 @@ import { TSurvey } from "@formbricks/types/surveys";
 export const getIsDebug = () => window.location.search.includes("formbricksDebug=true");
 
 export const getLanguageCode = (survey: TSurvey, attributes: TPersonAttributes): string | undefined => {
-  const language = attributes.language;
-  const availableLanguageCodes = survey.languages.map((surveyLanguage) => surveyLanguage.language.code);
-  if (!language) return "default";
-  else {
-    const selectedLanguage = survey.languages.find((surveyLanguage) => {
-      return surveyLanguage.language.code === language || surveyLanguage.language.alias === language;
-    });
-    if (selectedLanguage?.default) {
-      return "default";
+  let lang = "default";
+
+  const langParam = attributes.language;
+  const browserLanguageCode = typeof window !== "undefined" ? navigator?.language?.slice(0, 2) || "" : "";
+
+  const firstQuestion = survey?.questions?.at(0);
+
+  if (firstQuestion?.headline && typeof firstQuestion.headline === "object") {
+    const availableLanguages = Object.keys(firstQuestion.headline);
+
+    for (let i = 0; i < availableLanguages.length; i++) {
+      if (availableLanguages[i] === langParam) {
+        lang = langParam;
+        break;
+      }
+
+      if (availableLanguages[i] === browserLanguageCode) {
+        lang = browserLanguageCode;
+      }
     }
-    if (
-      !selectedLanguage ||
-      !selectedLanguage?.enabled ||
-      !availableLanguageCodes.includes(selectedLanguage.language.code)
-    ) {
-      return undefined;
-    }
-    return selectedLanguage.language.code;
   }
+  return lang;
 };
 
 export const getDefaultLanguageCode = (survey: TSurvey) => {

@@ -67,7 +67,7 @@ const renderWidget = async (survey: TSurvey, action?: string) => {
   const product = config.get().state.product;
   const attributes = config.get().state.attributes;
 
-  const isMultiLanguageSurvey = survey.languages.length > 1;
+  const isMultiLanguageSurvey = true;
   let languageCode = "default";
 
   if (isMultiLanguageSurvey) {

@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 
-import { getMultiLanguagePermission } from "@formbricks/ee/lib/service";
 import { authOptions } from "@formbricks/lib/authOptions";
 import { IS_FORMBRICKS_CLOUD } from "@formbricks/lib/constants";
 import { getMembershipByUserIdTeamId } from "@formbricks/lib/membership/service";
@@ -33,7 +32,7 @@ export default async function SettingsLayout({ children, params }) {
     throw new Error("Unauthenticated");
   }
 
-  const isMultiLanguageAllowed = getMultiLanguagePermission(team);
+  const isMultiLanguageAllowed = true;
 
   const currentUserMembership = await getMembershipByUserIdTeamId(session?.user.id, team.id);
 

@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 
-import { getAdvancedTargetingPermission, getMultiLanguagePermission } from "@formbricks/ee/lib/service";
+import { getAdvancedTargetingPermission } from "@formbricks/ee/lib/service";
 import { getActionClasses } from "@formbricks/lib/actionClass/service";
 import { getAttributeClasses } from "@formbricks/lib/attributeClass/service";
 import { authOptions } from "@formbricks/lib/authOptions";
@@ -60,7 +60,7 @@ export default async function SurveysEditPage({ params }) {
   const isSurveyCreationDeletionDisabled = isViewer;
 
   const isUserTargetingAllowed = getAdvancedTargetingPermission(team);
-  const isMultiLanguageAllowed = getMultiLanguagePermission(team);
+  const isMultiLanguageAllowed = true;
 
   if (
     !survey ||

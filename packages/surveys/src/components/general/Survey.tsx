@@ -17,6 +17,8 @@ import QuestionConditional from "./QuestionConditional";
 import ThankYouCard from "./ThankYouCard";
 import WelcomeCard from "./WelcomeCard";
 
+const RTL_LANGUAGES = ["ar", "he", "fa", "ur"];
+
 export function Survey({
   survey,
   styling,
@@ -64,6 +66,10 @@ export function Survey({
   }, [questionId, survey, history]);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const showProgressBar = !styling.hideProgressBar;
+
+  const isRtl = useMemo(() => {
+    return RTL_LANGUAGES.includes(languageCode);
+  }, [languageCode]);
 
   useEffect(() => {
     if (activeQuestionId === "hidden" || activeQuestionId === "multiLanguage") return;
@@ -327,6 +333,7 @@ export function Survey({
     <>
       <AutoCloseWrapper survey={survey} onClose={onClose}>
         <div
+          dir={isRtl ? "rtl" : "ltr"}
           className={cn(
             "no-scrollbar rounded-custom bg-survey-bg flex h-full w-full flex-col justify-between px-6 pb-3 pt-6",
             isCardBorderVisible ? "border-survey-border border" : "",

@@ -9,7 +9,6 @@ import { getMetadataForLinkSurvey } from "@/app/s/[surveyId]/metadata";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getMultiLanguagePermission } from "@formbricks/ee/lib/service";
 import { IMPRINT_URL, IS_FORMBRICKS_CLOUD, PRIVACY_URL, WEBAPP_URL } from "@formbricks/lib/constants";
 import { createPerson, getPersonByUserId } from "@formbricks/lib/person/service";
 import { getProductByEnvironmentId } from "@formbricks/lib/product/service";
@@ -62,7 +61,6 @@ export default async function LinkSurveyPage({ params, searchParams }: LinkSurve
   if (!team) {
     throw new Error("Team not found");
   }
-  const isMultiLanguageAllowed = getMultiLanguagePermission(team);
 
   if (survey && survey.status !== "inProgress") {
     return (
@@ -127,16 +125,27 @@ export default async function LinkSurveyPage({ params, searchParams }: LinkSurve
   }
 
   const getLanguageCode = (): string => {
-    if (!langParam || !isMultiLanguageAllowed) return "default";
-    else {
-      const selectedLanguage = survey.languages.find((surveyLanguage) => {
-        return surveyLanguage.language.code === langParam || surveyLanguage.language.alias === langParam;
-      });
-      if (selectedLanguage?.default || !selectedLanguage?.enabled) {
-        return "default";
+    let lang = "default";
+    const browserLanguageCode = typeof window !== "undefined" ? navigator?.language?.slice(0, 2) || "" : "";
+
+    const firstQuestion = survey?.questions?.at(0);
+
+    if (firstQuestion?.headline && typeof firstQuestion.headline === "object") {
+      const availableLanguages = Object.keys(firstQuestion.headline);
+
+      for (let i = 0; i < availableLanguages.length; i++) {
+        if (availableLanguages[i] === langParam) {
+          lang = langParam;
+          break;
+        }
+
+        if (availableLanguages[i] === browserLanguageCode) {
+          lang = browserLanguageCode;
+        }
       }
-      return selectedLanguage ? selectedLanguage.language.code : "default";
     }
+
+    return lang;
   };
 
   const languageCode = getLanguageCode();
