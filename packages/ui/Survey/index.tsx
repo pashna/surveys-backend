@@ -28,3 +28,18 @@ export const SurveyInline = (props: Omit<SurveyInlineProps, "containerId">) => {
   }, [containerId, props]);
   return <div id={containerId} className="h-full w-full" />;
 };
+
+export const SurveyMobileInline = (props: Omit<SurveyInlineProps, "containerId">) => {
+  const containerId = useMemo(() => createContainerId(), []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const renderInline = () => window.formbricksSurveys.renderSurveyInline({ ...props, containerId });
+      if (!window.formbricksSurveys) {
+        loadSurveyScript().then(renderInline);
+      } else {
+        renderInline();
+      }
+    }
+  }, [containerId, props]);
+  return <div id={containerId} className="w-full" />;
+};

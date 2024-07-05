@@ -63,7 +63,7 @@ export default function HowToSendCard({ localSurvey, setLocalSurvey, environment
       name: "Mobile App Survey",
       icon: SmartphoneIcon,
       description: "Survey users inside a mobile app (iOS & Android).",
-      comingSoon: true,
+      comingSoon: false,
       alert: false,
     },
   ];
