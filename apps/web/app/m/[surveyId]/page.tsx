@@ -1,20 +1,13 @@
-import { validateSurveySingleUseId } from "@/app/lib/singleUseSurveys";
-import MobileSurvey from "@/app/m/[surveyId]/components/MobileSurvey";
-import PinScreen from "@/app/m/[surveyId]/components/PinScreen";
-import SurveyInactive from "@/app/m/[surveyId]/components/SurveyInactive";
-import { checkValidity } from "@/app/m/[surveyId]/lib/prefilling";
+import MobileSurveyWrapper from "@/app/m/[surveyId]/components/MobileSurveyWrapper";
 import { getMetadataForMobileSurvey } from "@/app/m/[surveyId]/metadata";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { IMPRINT_URL, IS_FORMBRICKS_CLOUD, PRIVACY_URL, WEBAPP_URL } from "@formbricks/lib/constants";
-import { createPerson, getPersonByUserId } from "@formbricks/lib/person/service";
+import { WEBAPP_URL } from "@formbricks/lib/constants";
 import { getProductByEnvironmentId } from "@formbricks/lib/product/service";
-import { getResponseBySingleUseId, getResponseCountBySurveyId } from "@formbricks/lib/response/service";
+import { getResponseCountBySurveyId } from "@formbricks/lib/response/service";
 import { getSurvey } from "@formbricks/lib/survey/service";
-import { getTeamByEnvironmentId } from "@formbricks/lib/team/service";
 import { ZId } from "@formbricks/types/environment";
-import { TResponse } from "@formbricks/types/responses";
 
 import { getEmailVerificationDetails } from "./lib/helpers";
 
@@ -41,69 +34,15 @@ export async function generateMetadata({ params }: LinkSurveyPageProps): Promise
 
 export default async function LinkSurveyPage({ params, searchParams }: LinkSurveyPageProps) {
   const validId = ZId.safeParse(params.surveyId);
-  if (!validId.success) {
-    notFound();
-  }
-  const survey = await getSurvey(params.surveyId);
+  const survey = validId.success ? await getSurvey(params.surveyId) : null;
 
-  const suId = searchParams.suId;
-  const langParam = searchParams.lang; //can either be language code or alias
-  const isSingleUseSurvey = survey?.singleUse?.enabled;
-  const isSingleUseSurveyEncrypted = survey?.singleUse?.isEncrypted;
+  const { userId, lang: langParam } = searchParams;
 
-  if (!survey || survey.type !== "mobile" || survey.status === "draft") {
-    notFound();
-  }
-
-  const team = await getTeamByEnvironmentId(survey?.environmentId);
-  if (!team) {
-    throw new Error("Team not found");
-  }
-
-  if (survey && survey.status !== "inProgress") {
-    return (
-      <SurveyInactive
-        status={survey.status}
-        surveyClosedMessage={survey.surveyClosedMessage ? survey.surveyClosedMessage : undefined}
-      />
-    );
-  }
-
-  let singleUseId: string | undefined = undefined;
-  if (isSingleUseSurvey) {
-    // check if the single use id is present for single use surveys
-    if (!suId) {
-      return <SurveyInactive status="link invalid" />;
-    }
-
-    // if encryption is enabled, validate the single use id
-    let validatedSingleUseId: string | undefined = undefined;
-    if (isSingleUseSurveyEncrypted) {
-      validatedSingleUseId = validateSurveySingleUseId(suId);
-      if (!validatedSingleUseId) {
-        return <SurveyInactive status="link invalid" />;
-      }
-    }
-    // if encryption is disabled, use the suId as is
-    singleUseId = validatedSingleUseId ?? suId;
-  }
-
-  let singleUseResponse: TResponse | undefined = undefined;
-  if (isSingleUseSurvey) {
-    try {
-      singleUseResponse = singleUseId
-        ? (await getResponseBySingleUseId(survey.id, singleUseId)) ?? undefined
-        : undefined;
-    } catch (error) {
-      singleUseResponse = undefined;
-    }
-  }
-
-  // verify email: Check if the survey requires email verification
+  // // verify email: Check if the survey requires email verification
   let emailVerificationStatus: string = "";
   let verifiedEmail: string | undefined = undefined;
 
-  if (survey.verifyEmail) {
+  if (survey?.verifyEmail) {
     const token =
       searchParams && Object.keys(searchParams).length !== 0 && searchParams.hasOwnProperty("verify")
         ? searchParams.verify
@@ -117,7 +56,7 @@ export default async function LinkSurveyPage({ params, searchParams }: LinkSurve
   }
 
   // get product and person
-  const product = await getProductByEnvironmentId(survey.environmentId);
+  const product = survey ? await getProductByEnvironmentId(survey.environmentId) : null;
   if (!product) {
     throw new Error("Product not found");
   }
@@ -148,59 +87,18 @@ export default async function LinkSurveyPage({ params, searchParams }: LinkSurve
 
   const languageCode = getLanguageCode();
 
-  const userId = searchParams.userId;
-  if (userId) {
-    // make sure the person exists or get's created
-    const person = await getPersonByUserId(survey.environmentId, userId);
-    if (!person) {
-      await createPerson(survey.environmentId, userId);
-    }
-  }
-
-  const isSurveyPinProtected = Boolean(!!survey && survey.pin);
-  const responseCount = await getResponseCountBySurveyId(survey.id);
-
-  // question pre filling: Check if the first question is prefilled and if it is valid
-  const prefillAnswer = searchParams[survey.questions[0].id];
-  const isPrefilledAnswerValid = prefillAnswer
-    ? checkValidity(survey!.questions[0], prefillAnswer, languageCode)
-    : false;
-
-  if (isSurveyPinProtected) {
-    return (
-      <PinScreen
-        surveyId={survey.id}
-        product={product}
-        userId={userId}
-        emailVerificationStatus={emailVerificationStatus}
-        prefillAnswer={isPrefilledAnswerValid ? prefillAnswer : null}
-        singleUseId={isSingleUseSurvey ? singleUseId : undefined}
-        singleUseResponse={singleUseResponse ? singleUseResponse : undefined}
-        webAppUrl={WEBAPP_URL}
-        IMPRINT_URL={IMPRINT_URL}
-        PRIVACY_URL={PRIVACY_URL}
-        IS_FORMBRICKS_CLOUD={IS_FORMBRICKS_CLOUD}
-        verifiedEmail={verifiedEmail}
-        languageCode={languageCode}
-      />
-    );
-  }
-
-  if (!survey) {
-    return <></>;
-  }
+  const responseCount = survey && (await getResponseCountBySurveyId(survey.id));
 
   return (
-    <MobileSurvey
+    <MobileSurveyWrapper
       survey={survey}
       product={product}
       userId={userId}
       emailVerificationStatus={emailVerificationStatus}
-      prefillAnswer={isPrefilledAnswerValid ? prefillAnswer : null}
-      singleUseId={isSingleUseSurvey ? singleUseId : undefined}
-      singleUseResponse={singleUseResponse ? singleUseResponse : undefined}
       webAppUrl={WEBAPP_URL}
-      responseCount={survey.welcomeCard.showResponseCount ? responseCount : undefined}
+      responseCount={
+        survey?.welcomeCard?.showResponseCount ? (responseCount as number | undefined) : undefined
+      }
       verifiedEmail={verifiedEmail}
       languageCode={languageCode}
     />

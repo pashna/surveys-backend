@@ -1,5 +1,6 @@
 "use client";
 
+import { getAnecdoteBridge } from "@/app/m/[surveyId]/utils";
 import SurveyLinkUsed from "@/app/s/[surveyId]/components/SurveyLinkUsed";
 import VerifyEmail from "@/app/s/[surveyId]/components/VerifyEmail";
 import { getPrefillResponseData } from "@/app/s/[surveyId]/lib/prefilling";
@@ -179,6 +180,18 @@ export default function MobileSurvey({
     return product.styling;
   };
 
+  const onFinished = () => {
+    const bridge = getAnecdoteBridge();
+
+    if (!bridge) return;
+
+    bridge.postMessage(
+      JSON.stringify({
+        action: "surveyFillingOutSuccess",
+      })
+    );
+  };
+
   return (
     <div className="flex h-screen items-center justify-center">
       {!determineStyling().isLogoHidden && product.logo?.url && <ClientLogo product={product} />}
@@ -201,6 +214,7 @@ export default function MobileSurvey({
         <SurveyMobileInline
           survey={survey}
           styling={determineStyling()}
+          onFinished={onFinished}
           languageCode={languageCode}
           isBrandingEnabled={false}
           getSetIsError={(f: (value: boolean) => void) => {
