@@ -1,8 +1,9 @@
 "use client";
 
-import SurveyLinkUsed from "@/app/s/[surveyId]/components/SurveyLinkUsed";
-import VerifyEmail from "@/app/s/[surveyId]/components/VerifyEmail";
-import { getPrefillResponseData } from "@/app/s/[surveyId]/lib/prefilling";
+import SurveyLinkUsed from "@/app/m/[surveyId]/components/SurveyLinkUsed";
+import VerifyEmail from "@/app/m/[surveyId]/components/VerifyEmail";
+import { getPrefillResponseData } from "@/app/m/[surveyId]/lib/prefilling";
+import { getAnecdoteBridge } from "@/app/m/[surveyId]/utils";
 import { RefreshCcwIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -10,6 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FormbricksAPI } from "@formbricks/api";
 import { ResponseQueue } from "@formbricks/lib/responseQueue";
 import { SurveyState } from "@formbricks/lib/surveyState";
+import { TMobileSDKUser } from "@formbricks/types/mobileSdk";
 import { TProduct } from "@formbricks/types/product";
 import { TResponse, TResponseData, TResponseUpdate } from "@formbricks/types/responses";
 import { TUploadFileConfig } from "@formbricks/types/storage";
@@ -33,6 +35,7 @@ interface MobileSurveyProps {
   responseCount?: number;
   verifiedEmail?: string;
   languageCode: string;
+  sdkUser: TMobileSDKUser;
 }
 
 export default function MobileSurvey({
@@ -47,6 +50,7 @@ export default function MobileSurvey({
   responseCount,
   verifiedEmail,
   languageCode,
+  sdkUser,
 }: MobileSurveyProps) {
   const responseId = singleUseResponse?.id;
   const searchParams = useSearchParams();
@@ -179,6 +183,18 @@ export default function MobileSurvey({
     return product.styling;
   };
 
+  const onFinished = () => {
+    const bridge = getAnecdoteBridge();
+
+    if (!bridge) return;
+
+    bridge.postMessage(
+      JSON.stringify({
+        action: "surveyFillingOutSuccess",
+      })
+    );
+  };
+
   return (
     <div className="flex h-screen items-center justify-center">
       {!determineStyling().isLogoHidden && product.logo?.url && <ClientLogo product={product} />}
@@ -201,6 +217,7 @@ export default function MobileSurvey({
         <SurveyMobileInline
           survey={survey}
           styling={determineStyling()}
+          onFinished={onFinished}
           languageCode={languageCode}
           isBrandingEnabled={false}
           getSetIsError={(f: (value: boolean) => void) => {
@@ -251,6 +268,9 @@ export default function MobileSurvey({
                 meta: {
                   url: window.location.href,
                   source: sourceParam || "",
+                  anecdoteai: {
+                    ...sdkUser?.user?.attributes,
+                  },
                 },
               });
           }}

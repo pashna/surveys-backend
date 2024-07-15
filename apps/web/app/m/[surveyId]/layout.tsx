@@ -24,6 +24,15 @@ export default async function SurveyLayout({ children }) {
           `,
         }}
       />
+
+      <Script
+        id={"anecdoteMessageHandler"}
+        dangerouslySetInnerHTML={{
+          __html: `
+              typeof webkit === "object" && webkit?.messageHandlers?.anecdoteBridge?.onMessage = () => {}
+          `,
+        }}
+      />
       <noscript>
         <div>
           <img

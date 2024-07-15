@@ -1,22 +1,21 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 import { WEBAPP_URL } from "@formbricks/lib/constants";
 import { getProductByEnvironmentId } from "@formbricks/lib/product/service";
 import { COLOR_DEFAULTS } from "@formbricks/lib/styling/constants";
 import { getSurvey } from "@formbricks/lib/survey/service";
 
-export const getMetadataForMobileSurvey = async (surveyId: string): Promise<Metadata> => {
+export const getMetadataForMobileSurvey = async (surveyId: string): Promise<Metadata | null> => {
   const survey = await getSurvey(surveyId);
 
   if (!survey || survey.type !== "mobile" || survey.status === "draft") {
-    notFound();
+    return null;
   }
 
   const product = await getProductByEnvironmentId(survey.environmentId);
 
   if (!product) {
-    throw new Error("Product not found");
+    return null;
   }
 
   const brandColor = getBrandColorForURL(survey.styling?.brandColor?.light || COLOR_DEFAULTS.brandColor);

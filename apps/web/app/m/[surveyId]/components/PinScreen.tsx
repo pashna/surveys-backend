@@ -1,10 +1,10 @@
 "use client";
 
-import { validateSurveyPinAction } from "@/app/s/[surveyId]/actions";
-import LegalFooter from "@/app/s/[surveyId]/components/LegalFooter";
+import { validateSurveyPinAction } from "@/app/m/[surveyId]/actions";
+import LegalFooter from "@/app/m/[surveyId]/components/LegalFooter";
+import { MediaBackground } from "@/app/m/[surveyId]/components/MediaBackground";
+import { TSurveyPinValidationResponseError } from "@/app/m/[surveyId]/types";
 import LinkSurvey from "@/app/s/[surveyId]/components/LinkSurvey";
-import { MediaBackground } from "@/app/s/[surveyId]/components/MediaBackground";
-import { TSurveyPinValidationResponseError } from "@/app/s/[surveyId]/types";
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
 

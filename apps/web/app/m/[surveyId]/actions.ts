@@ -1,6 +1,6 @@
 "use server";
 
-import { TSurveyPinValidationResponseError } from "@/app/s/[surveyId]/types";
+import { TSurveyPinValidationResponseError } from "@/app/m/[surveyId]/types";
 
 import { LinkSurveyEmailData, sendLinkSurveyToVerifiedEmail } from "@formbricks/lib/emails/emails";
 import { verifyTokenForLinkSurvey } from "@formbricks/lib/jwt";

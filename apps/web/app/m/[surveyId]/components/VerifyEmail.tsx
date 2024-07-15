@@ -1,6 +1,6 @@
 "use client";
 
-import { sendLinkSurveyEmailAction } from "@/app/s/[surveyId]/actions";
+import { sendLinkSurveyEmailAction } from "@/app/m/[surveyId]/actions";
 import { MailIcon } from "lucide-react";
 import { ArrowLeft } from "lucide-react";
 import { useMemo, useState } from "react";
