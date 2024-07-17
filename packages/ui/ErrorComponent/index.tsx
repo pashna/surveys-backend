@@ -1,18 +1,27 @@
-import { XCircleIcon } from "lucide-react";
+import { FC } from "react";
 
-export const ErrorComponent: React.FC = ({}) => {
+export const ErrorComponent: FC = ({}) => {
   return (
-    <div className="rounded-lg bg-red-50 p-4">
-      <div className="flex">
-        <div className="flex-shrink-0">
-          <XCircleIcon className="h-12 w-12 text-red-400" aria-hidden="true" />
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <div className="mb-4 flex items-center justify-center text-4xl text-gray-500">
+          <svg width="50" height="46" viewBox="0 0 50 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M7.17969 45.2266C3.19531 45.2266 0.78125 42.4609 0.78125 38.875C0.78125 37.7734 1.0625 36.6484 1.69531 35.5938L19.8828 3.90625C21.0781 1.77344 23.1875 0.695312 25.3438 0.695312C27.5 0.695312 29.5859 1.77344 30.8047 3.90625L48.9922 35.5938C49.5781 36.625 49.9062 37.7734 49.9062 38.875C49.9062 42.4609 47.4922 45.2266 43.5078 45.2266H7.17969ZM7.20312 41.5469H43.4609C45.0781 41.5469 46.1094 40.2812 46.1094 38.8516C46.1094 38.4062 45.9922 37.8672 45.7344 37.375L27.5703 5.6875C27.0781 4.82031 26.2109 4.44531 25.3438 4.44531C24.4766 4.44531 23.5859 4.82031 23.0938 5.6875L4.92969 37.3516C4.67188 37.8438 4.57812 38.4062 4.57812 38.8516C4.57812 40.2812 5.5625 41.5469 7.20312 41.5469ZM25.3438 29.4297C24.1719 29.4297 23.5156 28.75 23.4922 27.5547L23.1875 15.1797C23.1641 13.9844 24.0547 13.1172 25.3203 13.1172C26.5625 13.1172 27.5 14.0078 27.4766 15.2031L27.1484 27.5547C27.125 28.7734 26.4688 29.4297 25.3438 29.4297ZM25.3438 37.0469C23.9844 37.0469 22.8125 35.9453 22.8125 34.6094C22.8125 33.25 23.9609 32.1719 25.3438 32.1719C26.7266 32.1719 27.875 33.2266 27.875 34.6094C27.875 35.9688 26.7031 37.0469 25.3438 37.0469Z"
+              fill="#64748B"
+            />
+          </svg>
         </div>
-        <div className="ml-3">
-          <h3 className="text-sm font-medium text-red-800">Error loading resources</h3>
-          <div className="mt-2 text-sm text-red-700">
-            <p>This resource doesn&apos;t exist or you don&apos;t have the neccessary rights to access it.</p>
-          </div>
-        </div>
+        <h2 className="mb-2 text-xl font-semibold text-gray-700">{"Something's gone wrong"}</h2>
+        <p className="mb-8 text-gray-500">Content could not be loaded</p>
+        <button
+          className="rounded px-4 py-2 text-white hover:bg-blue-600"
+          onClick={() => window.location.reload()}
+          style={{
+            background: "#64748B",
+          }}>
+          Reload
+        </button>
       </div>
     </div>
   );
