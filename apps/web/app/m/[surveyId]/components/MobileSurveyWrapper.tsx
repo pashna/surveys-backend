@@ -4,7 +4,7 @@ import MobileSurvey from "@/app/m/[surveyId]/components/MobileSurvey";
 import { getAnecdoteBridge } from "@/app/m/[surveyId]/utils";
 import { useEffect, useState } from "react";
 
-import { TMobileSDKUser, ZMobileSDKUser } from "@formbricks/types/mobileSdk";
+import { TMobileSDKUser, ZMobileSDKUserAction } from "@formbricks/types/mobileSdk";
 import { TProduct } from "@formbricks/types/product";
 import { TSurvey } from "@formbricks/types/surveys";
 
@@ -40,12 +40,15 @@ export default function MobileSurveyWrapper({
 
     // @ts-ignore
     bridge.onMessage = (msg) => {
-      const validMobileSDKUser = ZMobileSDKUser.safeParse(msg);
+      const obj = JSON.parse(msg);
+      const validMobileSDKUser = ZMobileSDKUserAction.safeParse(obj);
       if (!validMobileSDKUser.success) {
         return;
       }
 
-      setSdkUser(validMobileSDKUser.data);
+      if (validMobileSDKUser.data.action === "setUser") {
+        setSdkUser(validMobileSDKUser.data.user);
+      }
     };
   }, []);
 
@@ -103,7 +106,7 @@ export default function MobileSurveyWrapper({
     );
   }, [survey]);
 
-  if (!survey || survey.type !== "mobile" || survey.status !== "inProgress" || !product || !sdkUser) {
+  if (!survey || survey.type !== "mobile" || survey.status !== "inProgress" || !product) {
     return <></>;
   }
 

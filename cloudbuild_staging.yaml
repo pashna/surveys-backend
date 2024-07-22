@@ -65,6 +65,7 @@ steps:
         sed -i "s|WEBAPP_URL:.*|WEBAPP_URL: '$$WEBAPP_URL'|" app_staging.yaml
         sed -i "s|NEXT_PUBLIC_SENTRY_DSN:.*|NEXT_PUBLIC_SENTRY_DSN: '$$NEXT_PUBLIC_SENTRY_DSN'|" app_staging.yaml
     id: app_staging.yaml secrets injection
+
     entrypoint: bash
     secretEnv:
       - WEBAPP_URL
@@ -81,6 +82,7 @@ steps:
       - '-c'
       - |
         gcloud app deploy app_staging.yaml --project=$PROJECT_ID --image-url=us-east4-docker.pkg.dev/$PROJECT_ID/surveys-backend-staging/surveys-backend-staging:latest --quiet
+
     id: gcloud app deploy
     entrypoint: bash
 timeout: 2400s

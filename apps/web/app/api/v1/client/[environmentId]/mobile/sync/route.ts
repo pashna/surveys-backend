@@ -57,7 +57,7 @@ export async function GET(_, { params }: { params: { environmentId: string } }):
     return responses.successResponse(
       { ...state },
       true,
-      "public, s-maxage=600, max-age=840, stale-while-revalidate=600, stale-if-error=600"
+      "public, s-maxage=600, max-age=600, stale-while-revalidate=600, stale-if-error=600"
     );
   } catch (error) {
     console.error(error);

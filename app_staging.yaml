@@ -2,7 +2,6 @@ runtime: custom
 env: flex
 
 service: surveys-backend-staging
-
 env_variables:
   DATABASE_URL:
   EMAIL_VERIFICATION_DISABLED:
