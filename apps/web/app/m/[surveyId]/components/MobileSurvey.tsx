@@ -35,7 +35,7 @@ interface MobileSurveyProps {
   responseCount?: number;
   verifiedEmail?: string;
   languageCode: string;
-  sdkUser: TMobileSDKUser;
+  sdkUser?: TMobileSDKUser | null;
 }
 
 export default function MobileSurvey({
@@ -269,7 +269,7 @@ export default function MobileSurvey({
                   url: window.location.href,
                   source: sourceParam || "",
                   anecdoteai: {
-                    ...sdkUser?.user?.attributes,
+                    ...sdkUser?.attributes,
                   },
                 },
               });
