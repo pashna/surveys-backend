@@ -1,8 +1,7 @@
 runtime: custom
 env: flex
 
-service: anecdote-surveys-backend-staging
-
+service: surveys-backend-staging
 env_variables:
   DATABASE_URL:
   EMAIL_VERIFICATION_DISABLED:
