@@ -1,3 +1,7 @@
 dispatch:
    - url: "surveys.anecdoteai.com/*"
      service: anecdote-surveys-backend
+
+- url: "staging-surveys.anecdoteai.com/*"
+     service: surveys-backend-staging
+
