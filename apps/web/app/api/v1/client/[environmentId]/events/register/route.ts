@@ -1,7 +1,7 @@
 import { responses } from "@/app/lib/api/response";
 import { transformErrorToDetails } from "@/app/lib/api/validator";
 
-import { createActionClass } from "@formbricks/lib/actionClass/service";
+import { createActionClass, getActionClassByEnvironmentIdAndName } from "@formbricks/lib/actionClass/service";
 import { ZActionClassInput } from "@formbricks/types/actionClasses";
 
 interface Context {
@@ -35,13 +35,31 @@ export async function POST(req: Request, context: Context): Promise<Response> {
       );
     }
 
-    const actionClass = await createActionClass(environmentId, {
+    const existingAC = await getActionClassByEnvironmentIdAndName(environmentId, name);
+
+    if (existingAC) {
+      return responses.successResponse(
+        {
+          registered: false,
+          message: "No updates were necessary; the event is already registered.",
+        },
+        true
+      );
+    }
+
+    await createActionClass(environmentId, {
       name,
       type: "automatic",
       environmentId,
     });
 
-    return responses.successResponse(actionClass, true);
+    return responses.successResponse(
+      {
+        registered: true,
+        message: "The event was successfully registered.",
+      },
+      true
+    );
   } catch (error) {
     console.error(error);
     return responses.internalServerErrorResponse("Unable to handle the request: " + error.message, true);
