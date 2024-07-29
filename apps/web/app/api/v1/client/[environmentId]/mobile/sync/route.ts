@@ -2,6 +2,7 @@ import { responses } from "@/app/lib/api/response";
 import { transformErrorToDetails } from "@/app/lib/api/validator";
 
 import { getEnvironment, updateEnvironment } from "@formbricks/lib/environment/service";
+import { getProductByEnvironmentId } from "@formbricks/lib/product/service";
 import { getMobileSurveys } from "@formbricks/lib/survey/service";
 import { getTeamByEnvironmentId } from "@formbricks/lib/team/service";
 import { TJsStateSync, ZJsPublicSyncInput } from "@formbricks/types/js";
@@ -28,6 +29,8 @@ export async function GET(_, { params }: { params: { environmentId: string } }):
 
     const environment = await getEnvironment(environmentId);
     const team = await getTeamByEnvironmentId(environmentId);
+    const product = await getProductByEnvironmentId(environmentId);
+
     if (!team) {
       throw new Error("Team does not exist");
     }
@@ -52,6 +55,10 @@ export async function GET(_, { params }: { params: { environmentId: string } }):
     // Create the 'state' object with surveys
     const state = {
       surveys: filteredSurveys,
+      config: {
+        maxNumOfUserAttributes: product?.maxNumOfUserAttributes || 101,
+        surveyDismissDelay: product?.surveyDismissDelay || 6,
+      },
     };
 
     return responses.successResponse(

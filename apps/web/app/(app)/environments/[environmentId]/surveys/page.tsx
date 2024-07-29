@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 export default async function SurveysPage({ params }) {
   const session = await getServerSession(authOptions);
   const product = await getProductByEnvironmentId(params.environmentId);
+
   const team = await getTeamByEnvironmentId(params.environmentId);
   if (!session) {
     throw new Error("Session not found");
