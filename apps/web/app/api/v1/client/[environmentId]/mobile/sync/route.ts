@@ -1,6 +1,7 @@
 import { responses } from "@/app/lib/api/response";
 import { transformErrorToDetails } from "@/app/lib/api/validator";
 
+import { getActionClasses } from "@formbricks/lib/actionClass/service";
 import { getEnvironment, updateEnvironment } from "@formbricks/lib/environment/service";
 import { getProductByEnvironmentId } from "@formbricks/lib/product/service";
 import { getMobileSurveys } from "@formbricks/lib/survey/service";
@@ -27,9 +28,12 @@ export async function GET(_, { params }: { params: { environmentId: string } }):
 
     const { environmentId } = syncInputValidation.data;
 
-    const environment = await getEnvironment(environmentId);
-    const team = await getTeamByEnvironmentId(environmentId);
-    const product = await getProductByEnvironmentId(environmentId);
+    const [environment, team, product, actionClasses] = await Promise.all([
+      getEnvironment(environmentId),
+      getTeamByEnvironmentId(environmentId),
+      getProductByEnvironmentId(environmentId),
+      getActionClasses(environmentId),
+    ]);
 
     if (!team) {
       throw new Error("Team does not exist");
@@ -59,6 +63,7 @@ export async function GET(_, { params }: { params: { environmentId: string } }):
         maxNumOfUserAttributes: product?.maxNumOfUserAttributes || 101,
         surveyDismissDelay: product?.surveyDismissDelay || 6,
       },
+      registeredEvents: (actionClasses || []).map((action) => action.name),
     };
 
     return responses.successResponse(
