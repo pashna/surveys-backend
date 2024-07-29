@@ -55,6 +55,8 @@ export const ZProduct = z.object({
   highlightBorderColor: ZColor.nullish(),
   languages: z.array(ZLanguage),
   logo: ZLogo.nullish(),
+  maxNumOfUserAttributes: z.number().int(),
+  surveyDismissDelay: z.number().int(),
 });
 
 export type TProduct = z.infer<typeof ZProduct>;
@@ -73,6 +75,8 @@ export const ZProductUpdateInput = z.object({
   environments: z.array(ZEnvironment).optional(),
   styling: ZProductStyling.optional(),
   logo: ZLogo.optional(),
+  maxNumOfUserAttributes: z.number().optional(),
+  surveyDismissDelay: z.number().optional(),
 });
 
 export type TProductUpdateInput = z.infer<typeof ZProductUpdateInput>;

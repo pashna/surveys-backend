@@ -35,6 +35,8 @@ const selectProduct = {
   environments: true,
   styling: true,
   logo: true,
+  maxNumOfUserAttributes: true,
+  surveyDismissDelay: true,
 };
 
 export const getProducts = async (teamId: string, page?: number): Promise<TProduct[]> => {
