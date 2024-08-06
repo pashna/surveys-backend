@@ -51,7 +51,7 @@
     "@formbricks/js#go": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["@formbricks/js#build"]
+      "dependsOn": ["@formbricks/js#build", "@anecdoteai/sdk#build"]
     },
     "@formbricks/api#go": {
       "cache": false,
