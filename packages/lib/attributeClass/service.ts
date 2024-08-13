@@ -89,6 +89,51 @@ export const getAttributeClasses = async (
   return attributeClasses.map((attributeClass) => formatDateFields(attributeClass, ZAttributeClass));
 };
 
+export const getAttributeClassesWithValues = async (
+  environmentId: string,
+  page?: number
+): Promise<TAttributeClass[]> => {
+  const attributeClasses = await unstable_cache(
+    async () => {
+      validateInputs([environmentId, ZId], [page, ZOptionalNumber]);
+
+      try {
+        const attributeClasses = await prisma.attributeClass.findMany({
+          include: {
+            attributes: true, // если связь между AttributeClass и Attribute определена как 'attributes' в Prisma schema
+          },
+          where: {
+            environmentId: environmentId,
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+          take: page ? ITEMS_PER_PAGE : undefined,
+          skip: page ? ITEMS_PER_PAGE * (page - 1) : undefined,
+        });
+
+        return attributeClasses.filter((attributeClass) => {
+          if (attributeClass.name === "userId" && attributeClass.type === "automatic") {
+            return false;
+          }
+
+          return true;
+        });
+      } catch (error) {
+        throw new DatabaseError(
+          `Database error when fetching attributeClasses for environment ${environmentId}`
+        );
+      }
+    },
+    [`getAttributeClasses-${environmentId}-${page}`],
+    {
+      tags: [attributeClassCache.tag.byEnvironmentId(environmentId)],
+      revalidate: SERVICES_REVALIDATION_INTERVAL,
+    }
+  )();
+  return attributeClasses.map((attributeClass) => formatDateFields(attributeClass, ZAttributeClass));
+};
+
 export const updateAttributeClass = async (
   attributeClassId: string,
   data: Partial<TAttributeClassUpdateInput>
