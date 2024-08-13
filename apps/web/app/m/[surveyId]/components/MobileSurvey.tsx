@@ -128,23 +128,28 @@ export default function MobileSurvey({
     if (!parentRef.current || !bridge) return;
 
     const initHeight = parentRef.current.getBoundingClientRect().height;
-    bridge.postMessage(
-      JSON.stringify({
-        action: "contentHeightDidChange",
-        height: initHeight,
-      })
-    );
+
+    if (initHeight > 0) {
+      bridge.postMessage(
+        JSON.stringify({
+          action: "contentHeightDidChange",
+          height: initHeight,
+        })
+      );
+    }
 
     const observer = new ResizeObserver((entries) => {
       for (let entry of entries) {
-        console.log("height", entry.contentRect.height);
+        const height = entry.contentRect.height;
 
-        bridge.postMessage(
-          JSON.stringify({
-            action: "contentHeightDidChange",
-            height: entry.contentRect.height,
-          })
-        );
+        if (height > 0) {
+          bridge.postMessage(
+            JSON.stringify({
+              action: "contentHeightDidChange",
+              height,
+            })
+          );
+        }
       }
     });
     observer.observe(parentRef.current);
@@ -306,6 +311,7 @@ export default function MobileSurvey({
         prefillResponseData={prefillResponseData}
         responseCount={responseCount}
       />
+      <div style={{ height: 20, width: "100%" }}></div>
     </div>
   );
 
