@@ -336,7 +336,7 @@ export function Survey({
           dir={isRtl ? "rtl" : "ltr"}
           className={cn(
             "no-scrollbar rounded-custom bg-survey-bg flex h-full w-full flex-col justify-between px-6 pb-3 pt-6",
-            isCardBorderVisible ? "border-survey-border border" : "",
+            isCardBorderVisible ? "" : "",
             survey.type === "link" ? "fb-survey-shadow" : ""
           )}>
           <div ref={contentRef} className={cn(loadingElement ? "animate-pulse opacity-60" : "", "my-auto")}>
