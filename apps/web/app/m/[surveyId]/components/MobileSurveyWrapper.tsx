@@ -2,8 +2,9 @@
 
 import MobileSurvey from "@/app/m/[surveyId]/components/MobileSurvey";
 import { getAnecdoteBridge } from "@/app/m/[surveyId]/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import { RTL_LANGUAGES } from "@formbricks/surveys";
 import { TMobileSDKUser, ZMobileSDKUserAction } from "@formbricks/types/mobileSdk";
 import { TProduct } from "@formbricks/types/product";
 import { TSurvey } from "@formbricks/types/surveys";
@@ -29,7 +30,7 @@ export default function MobileSurveyWrapper({
 }: MobileSurveyProps) {
   const [sdkUser, setSdkUser] = useState<TMobileSDKUser | null>(null);
 
-  const getLanguageCode = (): string => {
+  const languageCode = useMemo(() => {
     let lang = "default";
 
     const attrLang = sdkUser?.attributes.language;
@@ -51,7 +52,22 @@ export default function MobileSurveyWrapper({
     }
 
     return lang;
-  };
+  }, [sdkUser?.attributes.language, survey?.questions]);
+
+  useEffect(() => {
+    const bridge = getAnecdoteBridge();
+
+    if (!bridge) return;
+
+    if (RTL_LANGUAGES.includes(languageCode)) {
+      bridge.postMessage(
+        JSON.stringify({
+          action: "contentTextDirectionDidChange",
+          isRTL: true,
+        })
+      );
+    }
+  }, [languageCode]);
 
   useEffect(() => {
     const bridge = getAnecdoteBridge();
@@ -125,8 +141,6 @@ export default function MobileSurveyWrapper({
       })
     );
   }, [survey]);
-
-  const languageCode = getLanguageCode();
 
   if (!survey || survey.type !== "mobile" || survey.status !== "inProgress" || !product) {
     return <></>;

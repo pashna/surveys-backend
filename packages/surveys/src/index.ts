@@ -2,6 +2,7 @@ import { SurveyInline } from "@/components/general/SurveyInline";
 import { SurveyMobileWrapper } from "@/components/general/SurveyMobileWrapper";
 import { SurveyModal } from "@/components/general/SurveyModal";
 import { addCustomThemeToDom, addStylesToDom } from "@/lib/styles";
+import { RTL_LANGUAGES } from "@/lib/utils.ts";
 import { h, render } from "preact";
 
 import { SurveyInlineProps, SurveyModalProps } from "@formbricks/types/formbricksSurveys";
@@ -48,6 +49,8 @@ export const renderMobileSurvey = (props: SurveyInlineProps) => {
   }
   render(h(SurveyMobileWrapper, props), element);
 };
+
+export { RTL_LANGUAGES };
 
 if (typeof window !== "undefined") {
   window.formbricksSurveys = {

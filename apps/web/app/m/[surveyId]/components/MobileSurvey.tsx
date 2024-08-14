@@ -20,6 +20,8 @@ import { SurveyMobileInline } from "@formbricks/ui/Survey";
 let setIsError = (_: boolean) => {};
 let setIsResponseSendingFinished = (_: boolean) => {};
 
+const MIN_HEIGHT = 200;
+
 interface MobileSurveyProps {
   survey: TSurvey;
   product: TProduct;
@@ -129,7 +131,7 @@ export default function MobileSurvey({
 
     const initHeight = parentRef.current.getBoundingClientRect().height;
 
-    if (initHeight > 0) {
+    if (initHeight > MIN_HEIGHT) {
       bridge.postMessage(
         JSON.stringify({
           action: "contentHeightDidChange",
@@ -142,7 +144,7 @@ export default function MobileSurvey({
       for (let entry of entries) {
         const height = entry.contentRect.height;
 
-        if (height > 0) {
+        if (height > MIN_HEIGHT) {
           bridge.postMessage(
             JSON.stringify({
               action: "contentHeightDidChange",
