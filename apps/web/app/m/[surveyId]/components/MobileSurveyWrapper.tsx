@@ -32,12 +32,10 @@ export default function MobileSurveyWrapper({
   const getLanguageCode = (): string => {
     let lang = "default";
 
-    const attrLang = sdkUser?.attributes.lang;
+    const attrLang = sdkUser?.attributes.language;
     if (!attrLang) {
       return lang;
     }
-
-    const browserLanguageCode = typeof window !== "undefined" ? navigator?.language?.slice(0, 2) || "" : "";
 
     const firstQuestion = survey?.questions?.at(0);
 
@@ -48,10 +46,6 @@ export default function MobileSurveyWrapper({
         if (availableLanguages[i] === attrLang) {
           lang = attrLang;
           break;
-        }
-
-        if (availableLanguages[i] === browserLanguageCode) {
-          lang = browserLanguageCode;
         }
       }
     }
