@@ -1,6 +1,5 @@
 import FormbricksBranding from "@/components/general/FormbricksBranding";
 import ProgressBar from "@/components/general/ProgressBar";
-import { ResponseErrorComponent } from "@/components/general/ResponseErrorComponent";
 import { AutoCloseWrapper } from "@/components/wrappers/AutoCloseWrapper";
 import { evaluateCondition } from "@/lib/logicEvaluator";
 import { RTL_LANGUAGES, cn } from "@/lib/utils";
@@ -17,7 +16,7 @@ import QuestionConditional from "./QuestionConditional";
 import ThankYouCard from "./ThankYouCard";
 import WelcomeCard from "./WelcomeCard";
 
-export function Survey({
+export function SurveyMobile({
   survey,
   styling,
   isBrandingEnabled,
@@ -27,11 +26,9 @@ export function Survey({
   onResponse = () => {},
   onClose = () => {},
   onFinished = () => {},
-  onRetry = () => {},
   isRedirectDisabled = false,
   prefillResponseData,
   languageCode,
-  getSetIsError,
   getSetIsResponseSendingFinished,
   onFileUpload,
   responseCount,
@@ -41,7 +38,6 @@ export function Survey({
   const [questionId, setQuestionId] = useState(
     activeQuestionId || (survey.welcomeCard.enabled ? "start" : survey?.questions[0]?.id)
   );
-  const [showError, setShowError] = useState(false);
   // flag state to store whether response processing has been completed or not, we ignore this check for survey editor preview and link survey preview where getSetIsResponseSendingFinished is undefined
   const [isResponseSendingFinished, setIsResponseSendingFinished] = useState(
     getSetIsResponseSendingFinished ? false : true
@@ -93,14 +89,6 @@ export function Survey({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (getSetIsError) {
-      getSetIsError((value: boolean) => {
-        setShowError(value);
-      });
-    }
-  }, [getSetIsError]);
 
   useEffect(() => {
     if (getSetIsResponseSendingFinished) {
@@ -264,11 +252,6 @@ export function Survey({
   };
 
   const getCardContent = (): JSX.Element | undefined => {
-    if (showError) {
-      return (
-        <ResponseErrorComponent responseData={responseData} questions={survey.questions} onRetry={onRetry} />
-      );
-    }
     if (questionId === "start" && survey.welcomeCard.enabled) {
       return (
         <WelcomeCard
@@ -334,7 +317,7 @@ export function Survey({
           dir={isRtl ? "rtl" : "ltr"}
           className={cn(
             "no-scrollbar rounded-custom bg-survey-bg flex h-full w-full flex-col justify-between px-6 pb-3 pt-6",
-            isCardBorderVisible ? "border-survey-border border" : "",
+            isCardBorderVisible ? "" : "",
             survey.type === "link" ? "fb-survey-shadow" : ""
           )}>
           <div ref={contentRef} className={cn(loadingElement ? "animate-pulse opacity-60" : "", "my-auto")}>

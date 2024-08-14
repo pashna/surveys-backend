@@ -1,5 +1,7 @@
 import { TSurvey } from "@formbricks/types/surveys";
 
+export const RTL_LANGUAGES = ["ar", "he", "fa", "ur"];
+
 export const cn = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
 };

@@ -10,6 +10,7 @@ declare global {
     formbricksSurveys: {
       renderSurveyInline: (props: SurveyInlineProps) => void;
       renderSurveyModal: (props: SurveyModalProps) => void;
+      renderMobileSurvey: (props: SurveyInlineProps) => void;
     };
   }
 }
@@ -33,11 +34,11 @@ export const SurveyMobileInline = (props: Omit<SurveyInlineProps, "containerId">
   const containerId = useMemo(() => createContainerId(), []);
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const renderInline = () => window.formbricksSurveys.renderSurveyInline({ ...props, containerId });
+      const renderMobile = () => window.formbricksSurveys.renderMobileSurvey({ ...props, containerId });
       if (!window.formbricksSurveys) {
-        loadSurveyScript().then(renderInline);
+        loadSurveyScript().then(renderMobile);
       } else {
-        renderInline();
+        renderMobile();
       }
     }
   }, [containerId, props]);

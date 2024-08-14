@@ -1,4 +1,5 @@
 import { SurveyInline } from "@/components/general/SurveyInline";
+import { SurveyMobileWrapper } from "@/components/general/SurveyMobileWrapper";
 import { SurveyModal } from "@/components/general/SurveyModal";
 import { addCustomThemeToDom, addStylesToDom } from "@/lib/styles";
 import { h, render } from "preact";
@@ -10,6 +11,7 @@ declare global {
     formbricksSurveys: {
       renderSurveyInline: (props: SurveyInlineProps) => void;
       renderSurveyModal: (props: SurveyModalProps) => void;
+      renderMobileSurvey: (props: SurveyInlineProps) => void;
     };
   }
 }
@@ -36,9 +38,21 @@ export const renderSurveyModal = (props: SurveyModalProps) => {
   render(h(SurveyModal, props), element);
 };
 
+export const renderMobileSurvey = (props: SurveyInlineProps) => {
+  addStylesToDom();
+  addCustomThemeToDom({ styling: props.styling, setBodyBgColor: true });
+
+  const element = document.getElementById(props.containerId);
+  if (!element) {
+    throw new Error(`renderSurvey: Element with id ${props.containerId} not found.`);
+  }
+  render(h(SurveyMobileWrapper, props), element);
+};
+
 if (typeof window !== "undefined") {
   window.formbricksSurveys = {
     renderSurveyInline,
     renderSurveyModal,
+    renderMobileSurvey,
   };
 }

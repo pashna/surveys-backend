@@ -11,27 +11,53 @@ import { TSurvey } from "@formbricks/types/surveys";
 interface MobileSurveyProps {
   survey?: TSurvey | null;
   product?: TProduct | null;
-  userId?: string;
   emailVerificationStatus?: string;
   prefillAnswer?: string;
   webAppUrl: string;
   responseCount?: number;
   verifiedEmail?: string;
-  languageCode: string;
 }
 
 export default function MobileSurveyWrapper({
   survey,
   product,
-  userId,
   emailVerificationStatus,
   prefillAnswer,
   webAppUrl,
   responseCount,
   verifiedEmail,
-  languageCode,
 }: MobileSurveyProps) {
   const [sdkUser, setSdkUser] = useState<TMobileSDKUser | null>(null);
+
+  const getLanguageCode = (): string => {
+    let lang = "default";
+
+    const attrLang = sdkUser?.attributes.lang;
+    if (!attrLang) {
+      return lang;
+    }
+
+    const browserLanguageCode = typeof window !== "undefined" ? navigator?.language?.slice(0, 2) || "" : "";
+
+    const firstQuestion = survey?.questions?.at(0);
+
+    if (firstQuestion?.headline && typeof firstQuestion.headline === "object") {
+      const availableLanguages = Object.keys(firstQuestion.headline);
+
+      for (let i = 0; i < availableLanguages.length; i++) {
+        if (availableLanguages[i] === attrLang) {
+          lang = attrLang;
+          break;
+        }
+
+        if (availableLanguages[i] === browserLanguageCode) {
+          lang = browserLanguageCode;
+        }
+      }
+    }
+
+    return lang;
+  };
 
   useEffect(() => {
     const bridge = getAnecdoteBridge();
@@ -106,6 +132,8 @@ export default function MobileSurveyWrapper({
     );
   }, [survey]);
 
+  const languageCode = getLanguageCode();
+
   if (!survey || survey.type !== "mobile" || survey.status !== "inProgress" || !product) {
     return <></>;
   }
@@ -113,7 +141,7 @@ export default function MobileSurveyWrapper({
   return (
     <MobileSurvey
       survey={survey}
-      userId={userId}
+      userId={sdkUser?.id}
       emailVerificationStatus={emailVerificationStatus}
       prefillAnswer={prefillAnswer}
       webAppUrl={webAppUrl}

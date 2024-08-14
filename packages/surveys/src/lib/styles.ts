@@ -16,7 +16,13 @@ export const addStylesToDom = () => {
   }
 };
 
-export const addCustomThemeToDom = ({ styling }: { styling: TProductStyling | TSurveyStyling }) => {
+export const addCustomThemeToDom = ({
+  styling,
+  setBodyBgColor,
+}: {
+  styling: TProductStyling | TSurveyStyling;
+  setBodyBgColor?: boolean;
+}) => {
   // Check if the style element already exists
   let styleElement = document.getElementById("formbricks__css__custom");
 
@@ -70,6 +76,9 @@ export const addCustomThemeToDom = ({ styling }: { styling: TProductStyling | TS
   }
 
   appendCssVariable("survey-background-color", styling.cardBackgroundColor?.light);
+  if (setBodyBgColor) {
+    appendCssVariable("body-background-color", styling.cardBackgroundColor?.light);
+  }
   appendCssVariable("survey-border-color", styling.cardBorderColor?.light);
   appendCssVariable("border-radius", `${roundness}px`);
   appendCssVariable("input-background-color", styling.inputColor?.light);

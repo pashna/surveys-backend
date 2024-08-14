@@ -4,9 +4,8 @@ import SurveyLinkUsed from "@/app/m/[surveyId]/components/SurveyLinkUsed";
 import VerifyEmail from "@/app/m/[surveyId]/components/VerifyEmail";
 import { getPrefillResponseData } from "@/app/m/[surveyId]/lib/prefilling";
 import { getAnecdoteBridge } from "@/app/m/[surveyId]/utils";
-import { RefreshCcwIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { FormbricksAPI } from "@formbricks/api";
 import { ResponseQueue } from "@formbricks/lib/responseQueue";
@@ -16,8 +15,6 @@ import { TProduct } from "@formbricks/types/product";
 import { TResponse, TResponseData, TResponseUpdate } from "@formbricks/types/responses";
 import { TUploadFileConfig } from "@formbricks/types/storage";
 import { TSurvey } from "@formbricks/types/surveys";
-import { ClientLogo } from "@formbricks/ui/ClientLogo";
-import { ContentWrapper } from "@formbricks/ui/ContentWrapper";
 import { SurveyMobileInline } from "@formbricks/ui/Survey";
 
 let setIsError = (_: boolean) => {};
@@ -60,6 +57,7 @@ export default function MobileSurvey({
   const defaultLanguageCode = survey.languages?.find((surveyLanguage) => {
     return surveyLanguage.default === true;
   })?.language.code;
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const startAt = searchParams?.get("startAt");
   const isStartAtValid = useMemo(() => {
@@ -122,6 +120,43 @@ export default function MobileSurvey({
     if (window.self === window.top) {
       setAutofocus(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const bridge = getAnecdoteBridge();
+
+    if (!parentRef.current || !bridge) return;
+
+    const initHeight = parentRef.current.getBoundingClientRect().height;
+
+    if (initHeight > 0) {
+      bridge.postMessage(
+        JSON.stringify({
+          action: "contentHeightDidChange",
+          height: initHeight,
+        })
+      );
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const height = entry.contentRect.height;
+
+        if (height > 0) {
+          bridge.postMessage(
+            JSON.stringify({
+              action: "contentHeightDidChange",
+              height,
+            })
+          );
+        }
+      }
+    });
+    observer.observe(parentRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   const hiddenFieldsRecord = useMemo<Record<string, string | number | string[]> | null>(() => {
@@ -196,100 +231,83 @@ export default function MobileSurvey({
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      {!determineStyling().isLogoHidden && product.logo?.url && <ClientLogo product={product} />}
-      <ContentWrapper className="w-full p-0 md:max-w-md">
-        {isPreview && (
-          <div className="fixed left-0 top-0 flex w-full items-center justify-between bg-slate-600 p-2 px-4 text-center text-sm text-white shadow-sm">
-            <div />
-            Survey Preview 👀
-            <button
-              type="button"
-              className="flex items-center rounded-full bg-slate-500 px-3 py-1 hover:bg-slate-400"
-              onClick={() =>
-                setActiveQuestionId(survey.welcomeCard.enabled ? "start" : survey?.questions[0]?.id)
-              }>
-              Restart <RefreshCcwIcon className="ml-2 h-4 w-4" />
-            </button>
-          </div>
-        )}
-
-        <SurveyMobileInline
-          survey={survey}
-          styling={determineStyling()}
-          onFinished={onFinished}
-          languageCode={languageCode}
-          isBrandingEnabled={false}
-          getSetIsError={(f: (value: boolean) => void) => {
-            setIsError = f;
-          }}
-          getSetIsResponseSendingFinished={
-            !isPreview
-              ? (f: (value: boolean) => void) => {
-                  setIsResponseSendingFinished = f;
-                }
-              : undefined
-          }
-          onRetry={() => {
-            setIsError(false);
-            responseQueue.processQueue();
-          }}
-          onDisplay={async () => {
-            if (!isPreview) {
-              const api = new FormbricksAPI({
-                apiHost: webAppUrl,
-                environmentId: survey.environmentId,
-              });
-              const res = await api.client.display.create({
-                surveyId: survey.id,
-              });
-              if (!res.ok) {
-                throw new Error("Could not create display");
+    <div ref={parentRef}>
+      <SurveyMobileInline
+        survey={survey}
+        styling={determineStyling()}
+        onFinished={onFinished}
+        languageCode={languageCode}
+        isBrandingEnabled={false}
+        getSetIsError={(f: (value: boolean) => void) => {
+          setIsError = f;
+        }}
+        getSetIsResponseSendingFinished={
+          !isPreview
+            ? (f: (value: boolean) => void) => {
+                setIsResponseSendingFinished = f;
               }
-              const { id } = res.data;
-
-              const newSurveyState = surveyState.copy();
-              newSurveyState.updateDisplayId(id);
-              setSurveyState(newSurveyState);
-            }
-          }}
-          onResponse={(responseUpdate: TResponseUpdate) => {
-            !isPreview &&
-              responseQueue.add({
-                data: {
-                  ...responseUpdate.data,
-                  ...hiddenFieldsRecord,
-                  ...getVerifiedEmail,
-                },
-                ttc: responseUpdate.ttc,
-                finished: responseUpdate.finished,
-                language:
-                  languageCode === "default" && defaultLanguageCode ? defaultLanguageCode : languageCode,
-                meta: {
-                  url: window.location.href,
-                  source: sourceParam || "",
-                  anecdoteai: {
-                    ...sdkUser?.attributes,
-                  },
-                },
-              });
-          }}
-          onFileUpload={async (file: File, params: TUploadFileConfig) => {
+            : undefined
+        }
+        onRetry={() => {
+          setIsError(false);
+          responseQueue.processQueue();
+        }}
+        onDisplay={async () => {
+          if (!isPreview) {
             const api = new FormbricksAPI({
               apiHost: webAppUrl,
               environmentId: survey.environmentId,
             });
+            const res = await api.client.display.create({
+              surveyId: survey.id,
+            });
+            if (!res.ok) {
+              throw new Error("Could not create display");
+            }
+            const { id } = res.data;
 
-            const uploadedUrl = await api.client.storage.uploadFile(file, params);
-            return uploadedUrl;
-          }}
-          onActiveQuestionChange={(questionId) => setActiveQuestionId(questionId)}
-          activeQuestionId={activeQuestionId}
-          autoFocus={autoFocus}
-          prefillResponseData={prefillResponseData}
-          responseCount={responseCount}
-        />
-      </ContentWrapper>
+            const newSurveyState = surveyState.copy();
+            newSurveyState.updateDisplayId(id);
+            setSurveyState(newSurveyState);
+          }
+        }}
+        onResponse={(responseUpdate: TResponseUpdate) => {
+          !isPreview &&
+            responseQueue.add({
+              data: {
+                ...responseUpdate.data,
+                ...hiddenFieldsRecord,
+                ...getVerifiedEmail,
+              },
+              ttc: responseUpdate.ttc,
+              finished: responseUpdate.finished,
+              language:
+                languageCode === "default" && defaultLanguageCode ? defaultLanguageCode : languageCode,
+              meta: {
+                url: window.location.href,
+                source: sourceParam || "",
+                anecdoteai: {
+                  ...sdkUser?.attributes,
+                },
+              },
+            });
+        }}
+        onFileUpload={async (file: File, params: TUploadFileConfig) => {
+          const api = new FormbricksAPI({
+            apiHost: webAppUrl,
+            environmentId: survey.environmentId,
+          });
+
+          const uploadedUrl = await api.client.storage.uploadFile(file, params);
+          return uploadedUrl;
+        }}
+        onActiveQuestionChange={(questionId) => setActiveQuestionId(questionId)}
+        activeQuestionId={activeQuestionId}
+        autoFocus={autoFocus}
+        prefillResponseData={prefillResponseData}
+        responseCount={responseCount}
+      />
+      <div style={{ height: 20, width: "100%" }}></div>
     </div>
   );
 }
