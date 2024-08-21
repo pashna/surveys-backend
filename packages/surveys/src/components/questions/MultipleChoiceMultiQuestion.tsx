@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "preact/hooks"
 
 import { getLocalizedValue } from "@formbricks/lib/i18n/utils";
 import { TResponseData, TResponseTtc } from "@formbricks/types/responses";
-import type { TSurveyMultipleChoiceMultiQuestion } from "@formbricks/types/surveys";
+import { TSurveyMultipleChoiceMultiQuestion, TSurveyType } from "@formbricks/types/surveys";
 
 interface MultipleChoiceMultiProps {
   question: TSurveyMultipleChoiceMultiQuestion;
@@ -23,6 +23,7 @@ interface MultipleChoiceMultiProps {
   ttc: TResponseTtc;
   setTtc: (ttc: TResponseTtc) => void;
   isInIframe: boolean;
+  type: TSurveyType;
 }
 
 export const MultipleChoiceMultiQuestion = ({
@@ -37,6 +38,7 @@ export const MultipleChoiceMultiQuestion = ({
   ttc,
   setTtc,
   isInIframe,
+  type,
 }: MultipleChoiceMultiProps) => {
   const [startTime, setStartTime] = useState(performance.now());
   const isMediaAvailable = question.imageUrl || question.videoUrl;
@@ -148,7 +150,11 @@ export const MultipleChoiceMultiQuestion = ({
         <fieldset>
           <legend className="sr-only">Options</legend>
           <div
-            className="bg-survey-bg relative max-h-[33vh] space-y-2 overflow-y-auto py-0.5 pr-2"
+            className={
+              type !== "mobile"
+                ? "bg-survey-bg relative max-h-[33vh] space-y-2 overflow-y-auto py-0.5 pr-2"
+                : "bg-survey-bg relative space-y-2 py-0.5 pr-2"
+            }
             ref={choicesContainerRef}>
             {questionChoices.map((choice, idx) => (
               <label

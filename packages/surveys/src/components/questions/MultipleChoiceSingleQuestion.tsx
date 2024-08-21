@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 
 import { getLocalizedValue } from "@formbricks/lib/i18n/utils";
 import { TResponseData, TResponseTtc } from "@formbricks/types/responses";
-import type { TSurveyMultipleChoiceSingleQuestion } from "@formbricks/types/surveys";
+import { TSurveyMultipleChoiceSingleQuestion, TSurveyType } from "@formbricks/types/surveys";
 
 interface MultipleChoiceSingleProps {
   question: TSurveyMultipleChoiceSingleQuestion;
@@ -23,6 +23,7 @@ interface MultipleChoiceSingleProps {
   ttc: TResponseTtc;
   setTtc: (ttc: TResponseTtc) => void;
   isInIframe: boolean;
+  type: TSurveyType;
 }
 
 export const MultipleChoiceSingleQuestion = ({
@@ -37,6 +38,7 @@ export const MultipleChoiceSingleQuestion = ({
   ttc,
   setTtc,
   isInIframe,
+  type,
 }: MultipleChoiceSingleProps) => {
   const [startTime, setStartTime] = useState(performance.now());
   const [otherSelected, setOtherSelected] = useState(false);
@@ -111,7 +113,11 @@ export const MultipleChoiceSingleQuestion = ({
           <legend className="sr-only">Options</legend>
 
           <div
-            className="bg-survey-bg relative max-h-[27vh] space-y-2 overflow-y-auto py-0.5 pr-2"
+            className={
+              type !== "mobile"
+                ? "bg-survey-bg relative max-h-[27vh] space-y-2 overflow-y-auto py-0.5 pr-2"
+                : "bg-survey-bg relative space-y-2 py-0.5 pr-2"
+            }
             role="radiogroup"
             ref={choicesContainerRef}>
             {questionChoices.map((choice, idx) => (

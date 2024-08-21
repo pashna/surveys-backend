@@ -14,7 +14,7 @@ import { RatingQuestion } from "@/components/questions/RatingQuestion";
 
 import { TResponseData, TResponseTtc } from "@formbricks/types/responses";
 import { TUploadFileConfig } from "@formbricks/types/storage";
-import { TSurveyQuestion, TSurveyQuestionType } from "@formbricks/types/surveys";
+import { TSurveyQuestion, TSurveyQuestionType, TSurveyType } from "@formbricks/types/surveys";
 
 interface QuestionConditionalProps {
   question: TSurveyQuestion;
@@ -30,6 +30,7 @@ interface QuestionConditionalProps {
   setTtc: (ttc: TResponseTtc) => void;
   surveyId: string;
   isInIframe: boolean;
+  type: TSurveyType;
 }
 
 export default function QuestionConditional({
@@ -46,6 +47,7 @@ export default function QuestionConditional({
   surveyId,
   onFileUpload,
   isInIframe,
+  type,
 }: QuestionConditionalProps) {
   return question.type === TSurveyQuestionType.OpenText ? (
     <OpenTextQuestion
@@ -76,6 +78,7 @@ export default function QuestionConditional({
       ttc={ttc}
       setTtc={setTtc}
       isInIframe={isInIframe}
+      type={type}
     />
   ) : question.type === TSurveyQuestionType.MultipleChoiceMulti ? (
     <MultipleChoiceMultiQuestion
@@ -91,6 +94,7 @@ export default function QuestionConditional({
       ttc={ttc}
       setTtc={setTtc}
       isInIframe={isInIframe}
+      type={type}
     />
   ) : question.type === TSurveyQuestionType.NPS ? (
     <NPSQuestion

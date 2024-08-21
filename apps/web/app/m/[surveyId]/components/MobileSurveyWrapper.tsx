@@ -74,8 +74,7 @@ export default function MobileSurveyWrapper({
 
     if (!bridge) return;
 
-    // @ts-ignore
-    bridge.onMessage = (msg) => {
+    const handler = (msg: string) => {
       const obj = JSON.parse(msg);
       const validMobileSDKUser = ZMobileSDKUserAction.safeParse(obj);
       if (!validMobileSDKUser.success) {
@@ -84,6 +83,14 @@ export default function MobileSurveyWrapper({
 
       if (validMobileSDKUser.data.action === "setUser") {
         setSdkUser(validMobileSDKUser.data.user);
+      }
+    };
+
+    bridge.addMessageHandler(handler);
+
+    return () => {
+      if (bridge) {
+        bridge.removeMessageHandler(handler);
       }
     };
   }, []);

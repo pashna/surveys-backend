@@ -304,6 +304,7 @@ export function SurveyMobile({
             isLastQuestion={currentQuestion.id === survey.questions[survey.questions.length - 1].id}
             languageCode={languageCode}
             isInIframe={isInIframe}
+            type={survey.type}
           />
         )
       );
