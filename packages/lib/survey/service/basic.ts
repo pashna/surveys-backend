@@ -509,6 +509,7 @@ export const createSurvey = async (environmentId: string, surveyBody: TSurveyInp
   const createdBy = surveyBody.createdBy;
   delete surveyBody.createdBy;
 
+  // @ts-ignore
   const data: Omit<Prisma.SurveyCreateInput, "environment"> = {
     ...surveyBody,
     // TODO: Create with attributeFilters
