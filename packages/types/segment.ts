@@ -327,6 +327,13 @@ export const ZSegment = z.object({
   surveys: z.array(z.string()),
 });
 
+export const ZSegmentInput = z.object({
+  title: z.string().optional(),
+  description: z.string().nullable(),
+  isPrivate: z.boolean().default(true),
+  filters: ZSegmentFilters,
+});
+
 export const ZSegmentCreateInput = z.object({
   environmentId: z.string(),
   title: z.string(),

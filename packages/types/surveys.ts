@@ -4,7 +4,7 @@ import { ZNoCodeConfig } from "./actionClasses";
 import { ZAllowedFileExtension, ZColor, ZPlacement } from "./common";
 import { ZPerson } from "./people";
 import { ZLanguage } from "./product";
-import { ZSegment } from "./segment";
+import { ZSegment, ZSegmentInput } from "./segment";
 import { ZBaseStyling } from "./styling";
 
 export const ZI18nString = z.record(z.string()).refine((obj) => "default" in obj, {
@@ -542,6 +542,7 @@ export const ZSurveyInput = z
     triggers: z.array(z.string()).optional(),
     inlineTriggers: ZSurveyInlineTriggers.optional(),
     productOverwrites: ZSurveyProductOverwrites.nullish(),
+    segment: ZSegmentInput.optional(),
   })
   .refine(
     (survey) => {

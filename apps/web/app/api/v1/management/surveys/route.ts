@@ -3,7 +3,9 @@ import { responses } from "@/app/lib/api/response";
 import { transformErrorToDetails } from "@/app/lib/api/validator";
 
 import { translateSurvey } from "@formbricks/lib/i18n/utils";
-import { createSurvey, getSurveys } from "@formbricks/lib/survey/service";
+import { createSegment } from "@formbricks/lib/segment/service";
+import { surveyCache } from "@formbricks/lib/survey/cache";
+import { createSurvey, getSurvey, getSurveys } from "@formbricks/lib/survey/service";
 import { DatabaseError } from "@formbricks/types/errors";
 import { ZSurveyInput } from "@formbricks/types/surveys";
 
@@ -49,10 +51,28 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     const environmentId = authentication.environmentId;
-    const surveyData = { ...inputValidation.data, environmentId: undefined };
+    const surveyData = { ...inputValidation.data, environmentId: undefined, segment: undefined };
 
     const survey = await createSurvey(environmentId, surveyData);
-    return responses.successResponse(survey);
+
+    const segment = {
+      environmentId,
+      surveyId: survey.id,
+      title: inputValidation.data.segment?.title || survey.id,
+      description: inputValidation.data.segment?.description || "",
+      isPrivate: inputValidation.data.segment?.isPrivate || true,
+      filters: inputValidation.data.segment?.filters || [],
+    };
+    await createSegment(segment);
+
+    surveyCache.revalidate({ id: survey.id });
+
+    const responseSurvey = await getSurvey(survey.id);
+    if (responseSurvey) {
+      return responses.successResponse(responseSurvey);
+    } else {
+      return responses.badRequestResponse("can't find survey");
+    }
   } catch (error) {
     if (error instanceof DatabaseError) {
       return responses.badRequestResponse(error.message);
