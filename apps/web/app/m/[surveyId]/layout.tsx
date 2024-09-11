@@ -17,10 +17,11 @@ export default async function SurveyLayout({ children }) {
             (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
     
             ym(96974915, "init", {
-            clickmap:true,
-            trackLinks:true,
-            accurateTrackBounce:true,
-            webvisor:true
+              clickmap:true,
+              trackLinks:true,
+              accurateTrackBounce:true,
+              webvisor:true
+            });
           `,
         }}
       />
