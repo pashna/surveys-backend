@@ -44,9 +44,9 @@ export function AutoCloseWrapper({ survey, onClose, children }: AutoCloseProps) 
 
   return (
     <div>
-      {survey.autoClose && showAutoCloseProgressBar && (
+      {survey.autoClose && showAutoCloseProgressBar ? (
         <AutoCloseProgressBar autoCloseTimeout={survey.autoClose} />
-      )}
+      ) : null}
       <div onClick={stopCountdown} onMouseOver={stopCountdown} className="h-full w-full">
         {children}
       </div>
