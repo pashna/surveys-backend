@@ -5,6 +5,36 @@ export default async function SurveyLayout({ children }) {
     <div>
       {children}
 
+      <Script src={"/scripts/polyfillStructuredClone.js"} />
+
+      <Script
+        id={"structured-clone"}
+        strategy={"beforeInteractive"}
+        dangerouslySetInnerHTML={{
+          __html: `
+            function structuredClone(obj) {
+              if (typeof obj !== 'object' || obj === null) {
+                // If the input is not an object or is null, return it directly
+                return obj;
+              }
+            
+              try {
+                // Use JSON.stringify to serialize the object to a JSON string
+                // Then use JSON.parse to deserialize it back to a new object
+                return JSON.parse(JSON.stringify(obj));
+              } catch (e) {
+                console.error('Failed to clone object:', e);
+                return null; // Return null if cloning fails
+              }
+            }
+
+            if (typeof structuredClone !== 'function' && typeof window !== 'undefined') {
+              window.structuredClone = structuredClone;
+            }
+          `,
+        }}
+      />
+
       {/* Yandex.Metrika counter */}
       <Script
         id={"yandex-metrika-script"}
