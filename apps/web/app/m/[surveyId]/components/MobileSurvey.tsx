@@ -117,6 +117,17 @@ export default function MobileSurvey({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (userId) {
+      setSurveyState((prev) => {
+        const newSurveyState = prev.copy();
+        newSurveyState.updateUserId(userId);
+
+        return newSurveyState;
+      });
+    }
+  }, [userId]);
+
   // Not in an iframe, enable autofocus on input fields.
   useEffect(() => {
     if (window.self === window.top) {
