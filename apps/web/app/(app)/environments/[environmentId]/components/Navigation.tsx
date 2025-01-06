@@ -1,6 +1,5 @@
 "use client";
 
-import FaveIcon from "@/app/favicon.ico";
 import { formbricksLogout } from "@/app/lib/formbricks";
 import clsx from "clsx";
 import {
@@ -59,6 +58,7 @@ import { CustomersIcon, DashboardIcon, FilterIcon, FormIcon, SettingsIcon } from
 
 import AddProductModal from "./AddProductModal";
 import UrlShortenerModal from "./UrlShortenerModal";
+import FaveIcon from "./favicon.ico";
 
 interface NavigationProps {
   environment: TEnvironment;
