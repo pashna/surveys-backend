@@ -62,6 +62,7 @@ FROM base AS runner
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 RUN apk add --no-cache curl \
+    && apk add --no-cache openssl-dev \
     && apk add --no-cache supercronic \
     # && addgroup --system --gid 1001 nodejs \
     && adduser --system --uid 1001 nextjs
