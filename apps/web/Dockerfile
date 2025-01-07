@@ -81,6 +81,8 @@ COPY --from=installer --chown=nextjs:nextjs /app/packages/database/migrations ./
 COPY --from=installer --chown=nextjs:nextjs /prisma_version.txt .
 COPY /docker/cronjobs /app/docker/cronjobs
 
+RUN apk add --no-cache openssl1.1
+
 # Install Prisma globally
 RUN PRISMA_VERSION=$(cat prisma_version.txt) && npm install -g prisma@$PRISMA_VERSION
 
